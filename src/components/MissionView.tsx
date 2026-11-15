@@ -24,7 +24,7 @@ const DEMO_STEPS = [
 
 const CONTEXTS: MissionContext[] = ["iss", "lunar", "mars"];
 
-export function MissionView({ demoStep }: { demoStep?: number }) {
+export function MissionView({ demoStep, guided = false, demoNote }: { demoStep?: number; guided?: boolean; demoNote?: string }) {
   const day = useMission((state) => state.day);
   const playing = useMission((state) => state.playing);
   const crewId = useMission((state) => state.crewId);
@@ -93,8 +93,8 @@ export function MissionView({ demoStep }: { demoStep?: number }) {
         <BodyTwin levels={levels} />
         <SidePanel day={day} stats={stats} system={selected} series={series} />
       </div>
-      <TimelineBar demoMode={demoStep !== undefined} />
-      <PacketDrawer demoNote={demoStep === DEMO_STEPS.length - 1 ? DEMO_STEPS[demoStep] : undefined} />
+      <TimelineBar demoMode={demoStep !== undefined} showAdvance={guided} />
+      <PacketDrawer demoNote={demoNote ?? (demoStep === DEMO_STEPS.length - 1 ? DEMO_STEPS[demoStep] : undefined)} />
       <LearnDialog />
     </div>
   );

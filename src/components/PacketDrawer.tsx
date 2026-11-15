@@ -96,9 +96,10 @@ export function PacketDrawer({ demoNote }: { demoNote?: string }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="packet-title"
+        data-testid="packet-drawer"
         className="hud-frame m-4 flex h-[calc(100%-2rem)] w-full max-w-xl flex-col p-4"
       >
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3" data-testid="packet-header">
           <h2 id="packet-title" className="font-mono text-sm tracking-[0.16em] text-[#9ad7ea]">
             FLIGHT SURGEON PACKET
           </h2>

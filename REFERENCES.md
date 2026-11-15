@@ -65,6 +65,10 @@ These are the links in `data.txt`. They are context pages. No number in the simu
 - Canadian Space Agency, Monitoring Radiation for Astronaut Health: https://www.asc-csa.gc.ca/eng/news/articles/2026/2026-02-26-monitoring-radiation-astronaut-health.asp
 - Canadian Space Agency, Why Do We Conduct Science Experiments in Space?: https://www.asc-csa.gc.ca/eng/iss/science/why-do-we-conduct-science-experiments-in-space.asp
 
+## Demo walkthrough
+
+The guided cursor on `/demo` is an inline SVG drawn by the app. It does not fetch an image, font, or script. No Playwright recorder is part of this repository, and no Playwright package is installed for the walkthrough.
+
 ## Not used
 
 No music, no stock photography, no external 3D human model, and no analytics script.

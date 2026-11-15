@@ -173,7 +173,7 @@ export function BodyTwin({ levels }: { levels: Record<BodySystem, RiskLevel> }) 
         <p className="font-mono text-xs tracking-[0.18em] text-[#9ad7ea]">BODY TWIN</p>
         <p className="text-xs text-[#d5e7f4]">{showGhost ? "Ghost shows the baseline silhouette" : "Baseline ghost hidden"}</p>
       </div>
-      <div className="h-[clamp(15rem,calc(100dvh-20rem),28.75rem)]">
+      <div className="h-[clamp(15rem,calc(100dvh-20rem),28.75rem)]" data-testid="body-twin">
         <Canvas
           camera={{ position: [1.7, 0.7, 3.35], fov: 32 }}
           dpr={[1, 1.75]}
@@ -196,10 +196,12 @@ export function BodyTwin({ levels }: { levels: Record<BodySystem, RiskLevel> }) 
           const Icon = ICONS[system];
           const chip = levelChip(levels[system]);
           const active = selected === system;
+          const flagged = SYSTEMS.find((item) => levels[item] !== "green");
           return (
             <button
               key={system}
               type="button"
+              data-testid={system === flagged ? "flagged-system" : `system-${system}`}
               aria-pressed={active}
               onClick={() => setSystem(system)}
               className={`system-button flex items-center gap-2 rounded-md border px-2 py-1.5 text-left ${active ? "border-[#8ef6ff]" : "border-[#245066]"}`}
