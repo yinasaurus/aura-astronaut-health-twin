@@ -33,7 +33,9 @@ summary {
 }
 
 .system-button:focus,
-.system-button:focus-visible {
+.system-button:focus-visible,
+.walkthrough-control:focus,
+.walkthrough-control:focus-visible {
   outline: 3px solid #ffe08a;
   outline-offset: 3px;
 }
@@ -61,6 +63,56 @@ summary {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+.walkthrough-cursor,
+.walkthrough-ring {
+  display: none;
+}
+
+.walkthrough-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 41;
+  pointer-events: none;
+  will-change: transform;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.45));
+}
+
+.walkthrough-ring {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  pointer-events: none;
+  will-change: transform;
+  border: 2px solid #ffe08a;
+  border-radius: 8px;
+  box-shadow: 0 0 0 4px rgba(255, 224, 138, 0.28);
+}
+
+.walkthrough-ripple {
+  position: fixed;
+  z-index: 41;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border: 2px solid #8ef6ff;
+  border-radius: 999px;
+  pointer-events: none;
+  animation: walkthrough-ripple 420ms ease-out forwards;
+}
+
+@keyframes walkthrough-ripple {
+  from {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  to {
+    transform: scale(2.4);
+    opacity: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

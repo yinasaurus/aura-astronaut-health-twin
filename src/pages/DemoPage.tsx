@@ -3,9 +3,52 @@ import { crewById } from "../data/crew";
 import { assessDay } from "../engine/assess";
 import { buildSeries } from "../engine/simulate";
 import { MissionView } from "../components/MissionView";
+import { WalkthroughOverlay } from "../components/WalkthroughOverlay";
 import { useMission } from "../store/mission";
 
+type DemoMode = "guided" | "classic";
+
 export function DemoPage() {
+  const [mode, setMode] = useState<DemoMode>("guided");
+  return (
+    <div>
+      <div className="mb-3 flex flex-wrap gap-2" role="group" aria-label="Demo mode">
+        <button
+          type="button"
+          className={`walkthrough-control rounded-md border px-3 py-2 text-sm ${mode === "guided" ? "border-[#8ef6ff]" : "border-[#245066]"}`}
+          aria-pressed={mode === "guided"}
+          data-testid="demo-mode-guided"
+          onClick={() => setMode("guided")}
+        >
+          Guided walkthrough
+        </button>
+        <button
+          type="button"
+          className={`walkthrough-control rounded-md border px-3 py-2 text-sm ${mode === "classic" ? "border-[#8ef6ff]" : "border-[#245066]"}`}
+          aria-pressed={mode === "classic"}
+          data-testid="demo-mode-classic"
+          onClick={() => setMode("classic")}
+        >
+          Classic demo
+        </button>
+      </div>
+      {mode === "guided" ? <GuidedDemo /> : <ClassicDemo />}
+    </div>
+  );
+}
+
+function GuidedDemo() {
+  const [note, setNote] = useState<string | undefined>();
+  const onEndCaption = useCallback((caption: string | undefined) => setNote(caption), []);
+  return (
+    <>
+      <MissionView guided demoNote={note} />
+      <WalkthroughOverlay onEndCaption={onEndCaption} />
+    </>
+  );
+}
+
+function ClassicDemo() {
   const [step, setStep] = useState(0);
   const timers = useRef<number[]>([]);
 

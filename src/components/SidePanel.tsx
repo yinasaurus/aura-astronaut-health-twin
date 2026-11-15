@@ -47,7 +47,7 @@ export function SidePanel({
             This pattern is marked for flight-surgeon review under the current assumption rules. It is not a diagnosis.
           </p>
         )}
-        <div>
+        <div data-testid="system-reasons">
           <h3 className="font-mono text-xs tracking-[0.16em] text-[#9ad7ea]">WHY</h3>
           <ul className="mt-2 space-y-2">
             {system.reasons.map((reason) => (
@@ -83,7 +83,7 @@ export function SidePanel({
           </ul>
         </div>
         {showCare ? (
-          <div>
+          <div data-testid="self-care">
             <h3 className="font-mono text-xs tracking-[0.16em] text-[#9ad7ea]">
               {commDelayOn ? "SELF-CARE WHILE THE LINK IS DELAYED" : "SELF-CARE PROMPTS"}
             </h3>

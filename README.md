@@ -12,12 +12,12 @@ npm test
 npm run dev
 ```
 
-Open the local URL Vite prints. The app has no backend and does not call the network at runtime. `/demo` plays a 30-second story. Press `R` to reset it.
+Open the local URL Vite prints. The app has no backend and does not call the network at runtime. `/demo` opens a guided walkthrough by default: a cursor in the page clicks the real controls through an eight-step story of about 30 seconds. Classic demo keeps the earlier timed auto-play. Press `R` to restart either one. Space pauses the walkthrough, and Esc stops it.
 
 ## What the screens do
 
 - **Mission** — four fictional astronauts, a 180-day series, a rotatable body twin, and a compound-risk panel.
-- **Demo** — day 60 starts quiet, a solar particle event is injected, day 64 turns at least one system amber, comm delay opens self-care, then the flight surgeon packet opens.
+- **Demo** — Guided walkthrough (default) or Classic demo. Both start on day 60 with every system quiet, inject a solar particle event, reach day 64 with at least one amber system, show the plain-language reasons, turn comm delay on for the offline self-care prompts, then open the flight surgeon packet. The walkthrough drives those controls with an on-screen cursor. Classic demo plays the same story on a timer. The choice is kept in memory only.
 - **Validation** — 200 seeded simulated crews. Three rules are compared. The table and charts are computed in the browser.
 - **Sources** — every simulation parameter. All of them are assumptions.
 - **Limitations** — what this build does not know.
@@ -52,7 +52,8 @@ Crew Care Quests are not in this build.
 ```text
 src/data/assumptions.ts   every numeric parameter
 src/engine                simulation, baseline, compound score, validation, packet
-src/components            HUD, body twin, panel, packet, learn
+src/demo                 guided walkthrough script and step runner
+src/components            HUD, body twin, panel, packet, learn, walkthrough overlay
 src/pages                 demo, validation, sources, limitations
 SOURCES.md                same parameters, to-verify list, empty citation placeholders
 REFERENCES.md             libraries, fonts, icons, and NASA pages

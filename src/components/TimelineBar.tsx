@@ -9,7 +9,7 @@ import { useMission } from "../store/mission";
 
 const EVENTS: EventType[] = ["solarParticle", "sleepDisruption", "isolationMood"];
 
-export function TimelineBar({ demoMode }: { demoMode: boolean }) {
+export function TimelineBar({ demoMode, showAdvance = false }: { demoMode: boolean; showAdvance?: boolean }) {
   const day = useMission((state) => state.day);
   const playing = useMission((state) => state.playing);
   const crewId = useMission((state) => state.crewId);
@@ -80,6 +80,19 @@ export function TimelineBar({ demoMode }: { demoMode: boolean }) {
           />
           <span className="font-mono text-xs text-[#d5e7f4]">of {missionDays}</span>
         </label>
+        {showAdvance && (
+          <button
+            type="button"
+            data-testid="advance-day"
+            className="rounded-md border border-[#8ef6ff] px-3 py-2 text-sm"
+            onClick={() => {
+              setPlaying(false);
+              setDay(64);
+            }}
+          >
+            Advance to day 64
+          </button>
+        )}
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
         {CREW.map((member) => (
@@ -99,6 +112,7 @@ export function TimelineBar({ demoMode }: { demoMode: boolean }) {
           <button
             key={type}
             type="button"
+            data-testid={type === "solarParticle" ? "inject-solar-particle" : undefined}
             className="rounded-md border border-[#ffb020] px-3 py-2 text-sm text-[#ffe2ad]"
             onClick={() => inject(type)}
           >
@@ -109,6 +123,7 @@ export function TimelineBar({ demoMode }: { demoMode: boolean }) {
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <button
           type="button"
+          data-testid="delay-toggle"
           aria-pressed={commDelayOn}
           className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-semibold ${commDelayOn ? "bg-[#ffb020] text-[#2a1c04]" : "border border-[#245066]"}`}
           onClick={() => setCommDelay(!commDelayOn)}
@@ -130,7 +145,7 @@ export function TimelineBar({ demoMode }: { demoMode: boolean }) {
           />
           min
         </label>
-        <button type="button" className="rounded-md border border-[#245066] px-3 py-2 text-sm" aria-pressed={ghost} onClick={() => setGhost(!ghost)}>
+        <button type="button" data-testid="ghost-toggle" className="rounded-md border border-[#245066] px-3 py-2 text-sm" aria-pressed={ghost} onClick={() => setGhost(!ghost)}>
           {ghost ? "Hide baseline ghost" : "Show baseline ghost"}
         </button>
         <button type="button" className="rounded-md border border-[#245066] px-3 py-2 text-sm" onClick={() => setLearnOpen(true)}>
@@ -138,6 +153,7 @@ export function TimelineBar({ demoMode }: { demoMode: boolean }) {
         </button>
         <button
           type="button"
+          data-testid="packet-button"
           className="rounded-md border border-[#8ef6ff] px-3 py-2 text-sm disabled:opacity-40"
           disabled={commDelayOn}
           onClick={() => setPacketOpen(true)}
