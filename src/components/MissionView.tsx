@@ -90,7 +90,7 @@ export function MissionView({ demoStep, guided = false, demoNote }: { demoStep?:
         </div>
       </div>
       <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)]">
-        <BodyTwin levels={levels} />
+        <BodyTwin levels={levels} heartBpm={stats.find((stat) => stat.id === "restingHr")?.current ?? 60} />
         <SidePanel day={day} stats={stats} system={selected} series={series} />
       </div>
       <TimelineBar demoMode={demoStep !== undefined} showAdvance={guided} />

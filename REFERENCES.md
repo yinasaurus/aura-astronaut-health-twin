@@ -1,6 +1,6 @@
 # References
 
-Used for the NASA Space Apps submission form. Versions match `package.json` / the installed lockfile at the time of this build. No paid asset, no downloaded 3D model, and no remote font is used. The body is procedural geometry in `src/components/BodyTwin.tsx`.
+Used for the NASA Space Apps submission form. Versions match `package.json` / the installed lockfile at the time of this build. No paid asset, no downloaded 3D model, and no remote font is used. The body is procedural hologram geometry in `src/components/BodyTwin.tsx`.
 
 ## Application libraries
 
@@ -42,7 +42,7 @@ Lucide icons from `lucide-react` (ISC): HeartPulse, Bone, Brain, Moon, Shield, E
 
 ## 3D
 
-No mesh file, texture, or scanned model. The figure is Three.js primitives (sphere, capsule, torus, ring) drawn in code.
+No mesh file, texture, or scanned model is shipped. `public/models/human.glb` is not part of this repository, so no external human model is loaded and there is no model credit to record. The figure is drawn in code: a lathe torso, a fresnel hologram shell, capsule limbs, a heart, brain, eyes, immune markers, and skeleton lines. No post-processing pass is used.
 
 ## Tooling, not shipped in the UI
 
