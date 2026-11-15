@@ -87,6 +87,9 @@ export function SidePanel({
             <h3 className="font-mono text-xs tracking-[0.16em] text-[#9ad7ea]">
               {commDelayOn ? "SELF-CARE WHILE THE LINK IS DELAYED" : "SELF-CARE PROMPTS"}
             </h3>
+            <p className="mt-2 text-sm leading-6 text-[#d5e7f4]">
+              Self-care prompts appear when the delay is on, or when a system is amber or red.
+            </p>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-[#e8f6ff]">
               {protocolSteps(system.system).map((step) => (
                 <li key={step}>{step}</li>
@@ -102,7 +105,7 @@ export function SidePanel({
           </div>
         ) : (
           <p className="text-sm leading-6 text-[#d5e7f4]">
-            The delay control is off, so the flight surgeon packet is available. Turn the delay on to see the offline self-care prompts.
+            The delay is off and this system is green, so the prompts are hidden. Self-care prompts appear when the delay is on, or when a system is amber or red. The flight surgeon packet is still available.
           </p>
         )}
       </div>

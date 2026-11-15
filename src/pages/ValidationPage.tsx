@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { assumption } from "../data/assumptions";
-import { evaluateMethods, type ValidationReport } from "../engine/metrics";
+import { evaluateMethods, fixedBandFalseAlarmMultiple, type ValidationReport } from "../engine/metrics";
 
 const SIMULATOR_NOTE =
   "Results come from our own simulator and detector. They show how the methods behave under our assumptions, not clinical performance. Tested on simulated data only.";
@@ -56,6 +56,7 @@ export function ValidationPage() {
               chosen: false,
             }))}
           />
+          <BandBreakdown report={report} />
           <section className="space-y-2">
             <h2 className="text-xl">Persistence sweep</h2>
             <p className="max-w-3xl text-sm leading-6 text-[#d5e7f4]">
@@ -80,6 +81,51 @@ export function ValidationPage() {
         </>
       )}
     </div>
+  );
+}
+
+function shareText(share: number): string {
+  return `${(share * 100).toFixed(1)}%`;
+}
+
+function multipleText(value: number): string {
+  const rounded = Math.round(value * 10) / 10;
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+}
+
+function BandBreakdown({ report }: { report: ValidationReport }) {
+  const multiple = fixedBandFalseAlarmMultiple(report.methods);
+  const sentence =
+    multiple === null
+      ? "Fixed bands detect more events but raise about N times more false alarms; N is computed from the table above."
+      : `Fixed bands detect more events but raise about ${multipleText(multiple)} times more false alarms; N is computed from the table above.`;
+  return (
+    <section className="grid items-start gap-3 lg:grid-cols-[minmax(0,1fr)_18rem]">
+      <div className="overflow-auto rounded-md border border-[#245066]">
+        <table className="w-full min-w-[520px] text-left text-sm">
+          <caption className="px-3 py-2 text-left text-sm text-[#d5e7f4]">
+            Fixed bands only. A flagged day can leave more than one band, so these shares can add up to more than 100%.
+          </caption>
+          <thead className="bg-[#102536] text-[#d5e7f4]">
+            <tr>
+              <th className="px-3 py-2 font-medium">Indicator</th>
+              <th className="px-3 py-2 font-medium">Share of alarms</th>
+              <th className="px-3 py-2 font-medium">Share of false alarms</th>
+            </tr>
+          </thead>
+          <tbody>
+            {report.bandShares.map((row) => (
+              <tr key={row.id} className="border-t border-[#245066]">
+                <td className="px-3 py-2">{row.label}</td>
+                <td className="px-3 py-2">{shareText(row.alarmShare)}</td>
+                <td className="px-3 py-2">{shareText(row.falseAlarmShare)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-sm leading-6 text-[#d5e7f4]">{sentence}</p>
+    </section>
   );
 }
 

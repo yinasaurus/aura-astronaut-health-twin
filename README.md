@@ -43,7 +43,7 @@ The main path does not use a population cutoff. Fixed bands appear only as the c
 | Any-input data | “Load a daily log” accepts a CSV. A template download uses the same columns. Loaded logs are still not medical records. |
 | Heart rate, blood pressure, blood sugar, temperature, sleep, mood | Resting heart rate, systolic and diastolic pressure, glucose, temperature, sleep hours, and mood score. Exercise minutes and cumulative radiation dose are included as well. |
 | Five hazards | Radiation, isolation and confinement, distance from Earth, gravity fields, and hostile closed environments. Each assumption names the hazard it is attached to. |
-| Self-care when Earth is delayed | The delay control is configurable up to the assumption `comm.delayMax`. On: protocols and a queued-message line. Off: flight surgeon packet, copy, and PDF. |
+| Self-care prompts | Self-care prompts appear when the delay is on, or when a system is amber or red. The delay control is configurable up to the assumption `comm.delayMax`. The flight surgeon packet, copy, and PDF stay available when the delay is off. |
 
 Crew Care Quests are not in this build.
 

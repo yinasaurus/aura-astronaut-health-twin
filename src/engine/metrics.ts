@@ -2,6 +2,7 @@ import { assumption } from "../data/assumptions";
 import { INDICATORS, SYSTEMS, type DayRecord, type EventType, type IndicatorId } from "../data/types";
 import { dailyRadiation, indicatorStats } from "./baseline";
 import { dayConfirmed, scoreSystems } from "./compound";
+import { INDICATOR_META } from "./format";
 import { mulberry32 } from "./rng";
 import { applyEvents, generateBaseSeries } from "./simulate";
 
@@ -27,11 +28,19 @@ export interface SweepScore {
   chosen: boolean;
 }
 
+export interface BandShare {
+  id: IndicatorId;
+  label: string;
+  alarmShare: number;
+  falseAlarmShare: number;
+}
+
 export interface ValidationReport {
   crews: number;
   crewDays: number;
   methods: MethodScore[];
   sweep: SweepScore[];
+  bandShares: BandShare[];
   definition: string;
   selectionRule: string;
 }
@@ -77,14 +86,22 @@ function outsideBand(id: IndicatorId, value: number): boolean {
   return value < assumption(`population.${id}.low`) || value > assumption(`population.${id}.high`);
 }
 
-function populationFlag(series: DayRecord[], day: number, dailyDose: number[]): boolean {
+function outsideIndicators(series: DayRecord[], day: number, dailyDose: number[]): IndicatorId[] {
   const index = day - 1;
   const row = series[index];
-  if (!row) return false;
-  return INDICATORS.some((id) => {
+  if (!row) return [];
+  return INDICATORS.filter((id) => {
     const value = id === "radiationDose" ? dailyDose[index] : row.values[id];
     return outsideBand(id, value);
   });
+}
+
+/** Fixed-band false alarms divided by the compound rule's false alarms. Both come from the results table. */
+export function fixedBandFalseAlarmMultiple(methods: MethodScore[]): number | null {
+  const fixed = methods.find((method) => method.id === "population");
+  const compound = methods.find((method) => method.id === "compound");
+  if (!fixed || !compound || compound.falseAlarms <= 0) return null;
+  return fixed.falseAlarms / compound.falseAlarms;
 }
 
 interface Tally {
@@ -123,6 +140,9 @@ export function evaluateMethods(): ValidationReport {
   const population = emptyTally();
   const personalZ = emptyTally();
   const compound = new Map<number, Tally>(candidates.map((days) => [days, emptyTally()]));
+  const alarmHits = Object.fromEntries(INDICATORS.map((id) => [id, 0])) as Record<IndicatorId, number>;
+  const falseHits = Object.fromEntries(INDICATORS.map((id) => [id, 0])) as Record<IndicatorId, number>;
+  let populationAlarmDays = 0;
   let events = 0;
 
   for (let crew = 0; crew < crews; crew += 1) {
@@ -150,7 +170,15 @@ export function evaluateMethods(): ValidationReport {
         bucket.falseAlarms += 1;
         return seen;
       };
-      first.population = note(population, populationFlag(series, day, dailyDose), first.population);
+      const outside = outsideIndicators(series, day, dailyDose);
+      if (outside.length > 0) {
+        populationAlarmDays += 1;
+        for (const id of outside) {
+          alarmHits[id] += 1;
+          if (!inWindow) falseHits[id] += 1;
+        }
+      }
+      first.population = note(population, outside.length > 0, first.population);
       first.personalZ = note(
         personalZ,
         stats.some((stat) => stat.adverseZ >= singleZ),
@@ -219,6 +247,12 @@ export function evaluateMethods(): ValidationReport {
       },
     ],
     sweep,
+    bandShares: INDICATORS.map((id) => ({
+      id,
+      label: INDICATOR_META[id].label,
+      alarmShare: populationAlarmDays === 0 ? 0 : alarmHits[id] / populationAlarmDays,
+      falseAlarmShare: population.falseAlarms === 0 ? 0 : falseHits[id] / population.falseAlarms,
+    })),
     selectionRule: PERSISTENCE_SELECTION_RULE,
     definition:
       "Lead time is the injected event's last day minus the first flagged day inside that event. Days outside an injected event count as false alarms, including slow hazard drift. Fixed bands compare each day with a reference-style range stored as an assumption; any indicator outside its range flags the day. Radiation uses the daily dose rate, not the running total. Personal z flags when any adverse z reaches the stored single-indicator cutoff. The compound rule flags when one body system has stayed confirmed for the selected number of days. Confirmation means the score is in the amber or red band and at least two mild signals are trending the adverse way. These cutoffs are assumptions, not clinical limits.",

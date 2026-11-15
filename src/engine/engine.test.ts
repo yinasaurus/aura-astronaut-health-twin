@@ -7,7 +7,7 @@ import type { IndicatorStat } from "../data/types";
 import { assessDay } from "./assess";
 import { indicatorStats } from "./baseline";
 import { adverseTrendCount, applyPersistence, dayConfirmed, scoreSystems, streakHeld } from "./compound";
-import { evaluateMethods, falseAlarmsPerDetection, median, pickPersistence, ratePer100, type SweepScore } from "./metrics";
+import { evaluateMethods, falseAlarmsPerDetection, fixedBandFalseAlarmMultiple, median, pickPersistence, ratePer100, type MethodScore, type SweepScore } from "./metrics";
 import { buildPacket, DISCLAIMER } from "./packet";
 import { applyEvents, buildSeries, generateBaseSeries } from "./simulate";
 
@@ -192,6 +192,21 @@ describe("metrics helpers", () => {
     expect(pickPersistence([row(4, 2, 4, 0), row(5, 1, 9, 0)]).persistDays).toBe(4);
   });
 
+  it("computes the fixed-band false-alarm multiple from the method rows", () => {
+    const method = (id: MethodScore["id"], detected: number, falseAlarms: number): MethodScore => ({
+      id,
+      label: id,
+      detected,
+      events: 10,
+      falseAlarms,
+      falseAlarmsPer100: ratePer100(falseAlarms, 100),
+      medianLeadDays: 1,
+      crewDays: 100,
+    });
+    expect(fixedBandFalseAlarmMultiple([method("population", 8, 20), method("personalZ", 4, 5), method("compound", 6, 4)])).toBe(5);
+    expect(fixedBandFalseAlarmMultiple([method("population", 8, 20), method("compound", 6, 0)])).toBeNull();
+  });
+
   it("stores the persistence length selected by the sweep", () => {
     const report = evaluateMethods();
     const chosen = report.sweep.find((row) => row.chosen);
@@ -199,6 +214,16 @@ describe("metrics helpers", () => {
     expect(assumption("score.persistDays")).toBe(chosen?.persistDays);
     expect(report.methods.find((method) => method.id === "compound")?.detected).toBe(chosen?.detected);
     expect(report.sweep.filter((row) => row.chosen)).toHaveLength(1);
+    expect(report.bandShares.length).toBeGreaterThan(0);
+    const alarmShare = report.bandShares.reduce((sum, row) => sum + row.alarmShare, 0);
+    expect(alarmShare).toBeGreaterThanOrEqual(1);
+    for (const row of report.bandShares) {
+      expect(row.alarmShare).toBeGreaterThanOrEqual(0);
+      expect(row.alarmShare).toBeLessThanOrEqual(1);
+      expect(row.falseAlarmShare).toBeGreaterThanOrEqual(0);
+      expect(row.falseAlarmShare).toBeLessThanOrEqual(1);
+    }
+    expect(fixedBandFalseAlarmMultiple(report.methods)).toBeGreaterThan(0);
   }, 30000);
 });
 

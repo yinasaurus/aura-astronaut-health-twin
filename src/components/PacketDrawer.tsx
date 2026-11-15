@@ -5,7 +5,7 @@ import { buildPacket } from "../engine/packet";
 import { useMission } from "../store/mission";
 import { useAssessment } from "../store/selectors";
 
-async function downloadPdf(text: string, day: number) {
+async function downloadPdf(text: string, day: number): Promise<"downloaded" | "blocked"> {
   const { jsPDF } = await import("jspdf");
   const safe = text.replaceAll("°", " deg");
   const doc = new jsPDF({ unit: "pt", format: "a4" });
@@ -19,10 +19,36 @@ async function downloadPdf(text: string, day: number) {
     doc.text(line, 48, y);
     y += 14;
   }
-  doc.save(`aura-flight-surgeon-packet-day-${day}.pdf`);
+  const blob = doc.output("blob") as Blob;
+  if (!blob || blob.size <= 0) return "blocked";
+  let url: string;
+  try {
+    url = URL.createObjectURL(blob);
+  } catch {
+    return "blocked";
+  }
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `aura-flight-surgeon-packet-day-${day}.pdf`;
+  link.rel = "noopener";
+  let blocked = false;
+  const onClick = (event: Event) => {
+    if (event.defaultPrevented) blocked = true;
+  };
+  link.addEventListener("click", onClick);
+  document.body.appendChild(link);
+  try {
+    link.click();
+  } catch {
+    blocked = true;
+  } finally {
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  return blocked ? "blocked" : "downloaded";
 }
 
-export function PacketDrawer() {
+export function PacketDrawer({ demoNote }: { demoNote?: string }) {
   const open = useMission((state) => state.packetOpen);
   const setOpen = useMission((state) => state.setPacketOpen);
   const day = useMission((state) => state.day);
@@ -80,6 +106,7 @@ export function PacketDrawer() {
             Close
           </button>
         </div>
+        {demoNote && <p className="mt-2 text-sm leading-6 text-[#e8f6ff]">{demoNote}</p>}
         <textarea
           ref={textRef}
           readOnly
@@ -114,8 +141,9 @@ export function PacketDrawer() {
             className="rounded-md border border-[#8ef6ff] px-3 py-2 text-sm"
             onClick={() => {
               void downloadPdf(text, day).then(
-                () => setPdfNote("Downloaded"),
-                () => setPdfNote("The PDF did not download."),
+                (result) =>
+                  setPdfNote(result === "downloaded" ? "Downloaded" : "Your browser blocked the download. Use Copy instead."),
+                () => setPdfNote("Your browser blocked the download. Use Copy instead."),
               );
             }}
           >

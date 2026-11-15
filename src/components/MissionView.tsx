@@ -94,7 +94,7 @@ export function MissionView({ demoStep }: { demoStep?: number }) {
         <SidePanel day={day} stats={stats} system={selected} series={series} />
       </div>
       <TimelineBar demoMode={demoStep !== undefined} />
-      <PacketDrawer />
+      <PacketDrawer demoNote={demoStep === DEMO_STEPS.length - 1 ? DEMO_STEPS[demoStep] : undefined} />
       <LearnDialog />
     </div>
   );
