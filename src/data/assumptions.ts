@@ -1,0 +1,182 @@
+import type { Assumption, HazardId } from "./types";
+
+/**
+ * Every numeric knob in the simulation.
+ * evidenceLevel stays "assumption" and source stays "ASSUMPTION" until a value
+ * is paired with a citation the team supplies. Do not mark these published.
+ */
+function row(
+  id: string,
+  value: number,
+  unit: string,
+  hazard: HazardId | "none",
+  rationale: string,
+): Assumption {
+  return {
+    id,
+    value,
+    unit,
+    hazard,
+    rationale,
+    source: "ASSUMPTION",
+    evidenceLevel: "assumption",
+  };
+}
+
+export const ASSUMPTIONS: Assumption[] = [
+  row("mission.days", 180, "day", "none", "Length of the scripted Mars-transit demo. Not a flown mission timeline."),
+  row("baseline.days", 14, "day", "none", "Personal baseline window. Chosen so the demo has an early reference period."),
+  row("trend.days", 5, "day", "none", "Window used for the recent mean and the comparison with the previous window."),
+  row("comm.delayMinutes", 22, "minute", "distance", "Default one-way delay control. The product brief described about 22 minutes. Not taken from a cited ephemeris."),
+  row("comm.delayMax", 22, "minute", "distance", "Upper end of the delay control in this build."),
+  row("validation.crews", 200, "crew", "none", "Number of seeded simulated crews on the validation page."),
+  row("validation.eventEarliest", 40, "day", "none", "Earliest mission day an evaluation event may start."),
+  row("validation.eventLatest", 120, "day", "none", "Latest mission day an evaluation event may start."),
+  row("sim.noiseClampSigma", 1.1, "sigma", "none", "Daily noise is clamped so one extreme draw does not dominate a short mission."),
+
+  row("score.mildZ", 0.8, "z", "none", "Adverse z above this counts as a mild signal inside the compound score."),
+  row("score.zScale", 2.5, "z", "none", "Adverse z is divided by this before it enters the score, and then capped at 1."),
+  row("score.singleIndicatorZ", 2.8, "z", "none", "Personal-z comparison method flags a day when any adverse z reaches this. Not a clinical limit."),
+  row("score.singleSignalFactor", 0.45, "factor", "none", "Shrinks the score when only one indicator is in the mild band, so one mild drift stays quieter."),
+  row("score.multiSignalFactor", 1, "factor", "none", "Factor used when two or more indicators in a system are in the mild band."),
+  row("score.amber", 44, "score", "none", "Score at or above this is amber. Unvalidated display rule."),
+  row("score.red", 78, "score", "none", "Score at or above this is red. Unvalidated display rule."),
+  row("score.escalateConfidence", 0.75, "confidence", "none", "Amber can ask for review when confidence is at least this and enough signals agree."),
+  row("score.escalateMinSignals", 3, "signal", "none", "Minimum mild signals in one system before an amber result asks for review."),
+  row("score.greenConfidence", 0.7, "confidence", "none", "Confidence shown when a system has no mild signal."),
+  row("score.confidenceAgreement", 0.45, "weight", "none", "How much the share of mild signals moves confidence."),
+  row("score.confidenceTrend", 0.25, "weight", "none", "How much an adverse 5-day trend moves confidence."),
+
+  row("weight.cardiovascular.restingHr", 1, "weight", "gravity", "Relative weight of resting heart rate inside the cardiovascular score."),
+  row("weight.cardiovascular.systolicBp", 0.8, "weight", "gravity", "Relative weight of systolic pressure inside the cardiovascular score."),
+  row("weight.cardiovascular.diastolicBp", 0.4, "weight", "gravity", "Relative weight of diastolic pressure inside the cardiovascular score."),
+  row("weight.cardiovascular.exerciseMin", 0.35, "weight", "gravity", "Relative weight of exercise minutes inside the cardiovascular score."),
+  row("weight.musculoskeletal.exerciseMin", 1, "weight", "gravity", "Musculoskeletal score uses exercise minutes only, because this build has no bone or muscle measurement."),
+  row("weight.brain.mood", 1, "weight", "isolation", "Relative weight of mood inside the brain and behavioural score."),
+  row("weight.brain.sleepHours", 0.45, "weight", "closed", "Relative weight of sleep inside the brain and behavioural score."),
+  row("weight.sleep.sleepHours", 1, "weight", "closed", "Relative weight of sleep hours inside the sleep score."),
+  row("weight.sleep.mood", 0.4, "weight", "isolation", "Relative weight of mood inside the sleep score."),
+  row("weight.immune.radiationDose", 1, "weight", "radiation", "Relative weight of radiation dose rate inside the immune score."),
+  row("weight.immune.sleepHours", 0.4, "weight", "closed", "Relative weight of sleep inside the immune score."),
+  row("weight.immune.temperature", 0.3, "weight", "closed", "Relative weight of temperature inside the immune score."),
+  row("weight.immune.glucose", 0.25, "weight", "closed", "Relative weight of glucose inside the immune score."),
+  row("weight.vision.radiationDose", 1, "weight", "radiation", "Vision score uses radiation dose rate only, because this build has no eye measurement."),
+
+  row("indicator.restingHr.center", 64, "bpm", "gravity", "Placeholder center for simulated resting heart rate. Not a reference range."),
+  row("indicator.restingHr.sigma", 1.8, "bpm", "gravity", "Placeholder day-to-day spread for resting heart rate."),
+  row("indicator.restingHr.spread", 4, "bpm", "gravity", "How far a simulated crew member's own center may sit from the placeholder center."),
+  row("indicator.restingHr.driftPerDay", 0.006, "bpm/day", "gravity", "Slow upward drift applied after the baseline window, before context weight."),
+  row("indicator.restingHr.min", 35, "bpm", "gravity", "Clamp so the simulator cannot emit a negative or tiny heart rate."),
+  row("indicator.restingHr.max", 140, "bpm", "gravity", "Clamp so a stacked event cannot run away without bound."),
+  row("indicator.systolicBp.center", 114, "mmHg", "gravity", "Placeholder center for simulated systolic pressure. Not a reference range."),
+  row("indicator.systolicBp.sigma", 2.5, "mmHg", "gravity", "Placeholder day-to-day spread for systolic pressure."),
+  row("indicator.systolicBp.spread", 6, "mmHg", "gravity", "Crew-to-crew offset for the systolic center."),
+  row("indicator.systolicBp.driftPerDay", 0.005, "mmHg/day", "gravity", "Slow upward drift applied after the baseline window."),
+  row("indicator.systolicBp.min", 70, "mmHg", "gravity", "Lower clamp for simulated systolic pressure."),
+  row("indicator.systolicBp.max", 180, "mmHg", "gravity", "Upper clamp for simulated systolic pressure."),
+  row("indicator.diastolicBp.center", 72, "mmHg", "gravity", "Placeholder center for simulated diastolic pressure. Not a reference range."),
+  row("indicator.diastolicBp.sigma", 1.8, "mmHg", "gravity", "Placeholder day-to-day spread for diastolic pressure."),
+  row("indicator.diastolicBp.spread", 4, "mmHg", "gravity", "Crew-to-crew offset for the diastolic center."),
+  row("indicator.diastolicBp.driftPerDay", 0.003, "mmHg/day", "gravity", "Slow upward drift applied after the baseline window."),
+  row("indicator.diastolicBp.min", 40, "mmHg", "gravity", "Lower clamp for simulated diastolic pressure."),
+  row("indicator.diastolicBp.max", 120, "mmHg", "gravity", "Upper clamp for simulated diastolic pressure."),
+  row("indicator.glucose.center", 90, "mg/dL", "closed", "Placeholder center for simulated glucose, stored in mg/dL as a unit choice, not a standard we are citing."),
+  row("indicator.glucose.sigma", 3, "mg/dL", "closed", "Placeholder day-to-day spread for glucose."),
+  row("indicator.glucose.spread", 6, "mg/dL", "closed", "Crew-to-crew offset for the glucose center."),
+  row("indicator.glucose.driftPerDay", 0.008, "mg/dL/day", "closed", "Slow drift applied after the baseline window."),
+  row("indicator.glucose.min", 50, "mg/dL", "closed", "Lower clamp for simulated glucose."),
+  row("indicator.glucose.max", 250, "mg/dL", "closed", "Upper clamp for simulated glucose."),
+  row("indicator.temperature.center", 36.6, "°C", "closed", "Placeholder center for simulated body temperature."),
+  row("indicator.temperature.sigma", 0.05, "°C", "closed", "Placeholder day-to-day spread for temperature."),
+  row("indicator.temperature.spread", 0.1, "°C", "closed", "Crew-to-crew offset for the temperature center."),
+  row("indicator.temperature.driftPerDay", 0.0003, "°C/day", "closed", "Slow drift applied after the baseline window."),
+  row("indicator.temperature.min", 35, "°C", "closed", "Lower clamp for simulated temperature."),
+  row("indicator.temperature.max", 40, "°C", "closed", "Upper clamp for simulated temperature."),
+  row("indicator.sleepHours.center", 7.4, "hour", "closed", "Placeholder center for simulated sleep duration."),
+  row("indicator.sleepHours.sigma", 0.28, "hour", "closed", "Placeholder day-to-day spread for sleep."),
+  row("indicator.sleepHours.spread", 0.35, "hour", "closed", "Crew-to-crew offset for the sleep center."),
+  row("indicator.sleepHours.driftPerDay", -0.002, "hour/day", "closed", "Slow shortening of sleep after the baseline window."),
+  row("indicator.sleepHours.min", 0, "hour", "closed", "Sleep cannot be negative."),
+  row("indicator.sleepHours.max", 12, "hour", "closed", "Upper clamp for simulated sleep."),
+  row("indicator.mood.center", 7.6, "score", "isolation", "Placeholder center on a 0 to 10 mood scale invented for this simulation."),
+  row("indicator.mood.sigma", 0.22, "score", "isolation", "Placeholder day-to-day spread for mood."),
+  row("indicator.mood.spread", 0.4, "score", "isolation", "Crew-to-crew offset for the mood center."),
+  row("indicator.mood.driftPerDay", -0.0025, "score/day", "isolation", "Slow mood decline tied to the isolation weight."),
+  row("indicator.mood.distanceDriftPerDay", -0.001, "score/day", "distance", "Extra mood decline tied to the distance-from-Earth weight."),
+  row("indicator.mood.min", 0, "score", "isolation", "Lower end of the invented mood scale."),
+  row("indicator.mood.max", 10, "score", "isolation", "Upper end of the invented mood scale."),
+  row("indicator.radiationDose.center", 0.18, "mSv/day", "radiation", "Placeholder daily dose rate. The screen shows the running total. Drift uses the daily rate, because a running total always rises."),
+  row("indicator.radiationDose.sigma", 0.04, "mSv/day", "radiation", "Placeholder day-to-day spread of the daily dose rate."),
+  row("indicator.radiationDose.spread", 0.02, "mSv/day", "radiation", "Crew-to-crew offset for the daily dose rate."),
+  row("indicator.radiationDose.driftPerDay", 0, "mSv/day/day", "radiation", "The daily rate has no extra slope. Events add dose on top."),
+  row("indicator.radiationDose.min", 0, "mSv/day", "radiation", "Daily dose rate cannot be negative."),
+  row("indicator.radiationDose.max", 50, "mSv/day", "radiation", "Upper clamp for a simulated daily dose rate."),
+  row("indicator.exerciseMin.center", 80, "minute", "gravity", "Placeholder center for simulated exercise time."),
+  row("indicator.exerciseMin.sigma", 6, "minute", "gravity", "Placeholder day-to-day spread for exercise."),
+  row("indicator.exerciseMin.spread", 8, "minute", "gravity", "Crew-to-crew offset for the exercise center."),
+  row("indicator.exerciseMin.driftPerDay", -0.04, "minute/day", "gravity", "Slow decline in exercise minutes after the baseline window."),
+  row("indicator.exerciseMin.min", 0, "minute", "gravity", "Exercise time cannot be negative."),
+  row("indicator.exerciseMin.max", 240, "minute", "gravity", "Upper clamp for simulated exercise time."),
+
+  row("context.iss.radiation", 0.8, "weight", "radiation", "ISS risk weight for radiation signals."),
+  row("context.iss.isolation", 0.85, "weight", "isolation", "ISS risk weight for isolation signals."),
+  row("context.iss.distance", 0.2, "weight", "distance", "ISS risk weight for distance-from-Earth signals."),
+  row("context.iss.gravity", 1, "weight", "gravity", "ISS risk weight for gravity-field signals."),
+  row("context.iss.closed", 1, "weight", "closed", "ISS risk weight for closed-environment signals."),
+  row("context.lunar.radiation", 1, "weight", "radiation", "Lunar-base risk weight for radiation signals."),
+  row("context.lunar.isolation", 1, "weight", "isolation", "Lunar-base risk weight for isolation signals."),
+  row("context.lunar.distance", 0.6, "weight", "distance", "Lunar-base risk weight for distance-from-Earth signals."),
+  row("context.lunar.gravity", 0.7, "weight", "gravity", "Lunar-base risk weight for gravity-field signals."),
+  row("context.lunar.closed", 1, "weight", "closed", "Lunar-base risk weight for closed-environment signals."),
+  row("context.mars.radiation", 1.1, "weight", "radiation", "Mars-transit risk weight for radiation signals."),
+  row("context.mars.isolation", 1.15, "weight", "isolation", "Mars-transit risk weight for isolation signals."),
+  row("context.mars.distance", 1.25, "weight", "distance", "Mars-transit risk weight for distance-from-Earth signals."),
+  row("context.mars.gravity", 1, "weight", "gravity", "Mars-transit risk weight for gravity-field signals."),
+  row("context.mars.closed", 1.05, "weight", "closed", "Mars-transit risk weight for closed-environment signals."),
+
+  row("event.solarParticle.duration", 5, "day", "radiation", "How long a solar-particle injection keeps its added daily effects."),
+  row("event.solarParticle.restingHr", 2.97, "bpm", "radiation", "Added resting heart rate during a solar-particle injection. About 1.65 placeholder sigmas."),
+  row("event.solarParticle.systolicBp", 4.13, "mmHg", "radiation", "Added systolic pressure during a solar-particle injection."),
+  row("event.solarParticle.sleepHours", -0.46, "hour", "radiation", "Sleep change during a solar-particle injection."),
+  row("event.solarParticle.mood", -0.16, "score", "radiation", "Mood change during a solar-particle injection. Kept smaller than the heart-rate shift so the scripted day stays in the amber band for this seed."),
+  row("event.solarParticle.radiationDaily", 0.066, "mSv/day", "radiation", "Extra daily dose during a solar-particle injection. It stays in the running total afterward."),
+  row("event.sleepDisruption.duration", 4, "day", "closed", "How long a sleep-disruption injection lasts."),
+  row("event.sleepDisruption.sleepHours", -0.5, "hour", "closed", "Sleep change during a sleep-disruption injection."),
+  row("event.sleepDisruption.mood", -0.29, "score", "closed", "Mood change during a sleep-disruption injection."),
+  row("event.isolationMood.duration", 6, "day", "isolation", "How long an isolation low-mood injection lasts."),
+  row("event.isolationMood.mood", -0.42, "score", "isolation", "Mood change during an isolation injection."),
+  row("event.isolationMood.sleepHours", -0.22, "hour", "isolation", "Sleep change during an isolation injection."),
+
+  row("population.restingHr.low", 45, "bpm", "none", "Assumed band used only by the fixed-threshold comparison. Not a clinical limit."),
+  row("population.restingHr.high", 100, "bpm", "none", "Assumed band used only by the fixed-threshold comparison. Not a clinical limit."),
+  row("population.systolicBp.low", 85, "mmHg", "none", "Assumed band used only by the fixed-threshold comparison."),
+  row("population.systolicBp.high", 150, "mmHg", "none", "Assumed band used only by the fixed-threshold comparison."),
+  row("population.diastolicBp.low", 50, "mmHg", "none", "Assumed band used only by the fixed-threshold comparison."),
+  row("population.diastolicBp.high", 95, "mmHg", "none", "Assumed band used only by the fixed-threshold comparison."),
+  row("population.glucose.low", 65, "mg/dL", "none", "Assumed band used only by the fixed-threshold comparison."),
+  row("population.glucose.high", 160, "mg/dL", "none", "Assumed band used only by the fixed-threshold comparison."),
+  row("population.temperature.low", 35.8, "°C", "none", "Assumed band used only by the fixed-threshold comparison."),
+  row("population.temperature.high", 37.6, "°C", "none", "Assumed band used only by the fixed-threshold comparison."),
+  row("population.sleepHours.low", 4.5, "hour", "none", "Assumed band used only by the fixed-threshold comparison."),
+  row("population.sleepHours.high", 10, "hour", "none", "Assumed band used only by the fixed-threshold comparison."),
+  row("population.mood.low", 3, "score", "none", "Assumed band used only by the fixed-threshold comparison."),
+  row("population.mood.high", 10, "score", "none", "Assumed band used only by the fixed-threshold comparison."),
+  row("population.radiationDose.low", 0, "mSv/day", "none", "Assumed daily-dose band used only by the fixed-threshold comparison. It is not applied to the running total."),
+  row("population.radiationDose.high", 1.5, "mSv/day", "none", "Assumed daily-dose band used only by the fixed-threshold comparison."),
+  row("population.exerciseMin.low", 20, "minute", "none", "Assumed band used only by the fixed-threshold comparison."),
+  row("population.exerciseMin.high", 200, "minute", "none", "Assumed band used only by the fixed-threshold comparison."),
+];
+
+const BY_ID = new Map(ASSUMPTIONS.map((item) => [item.id, item]));
+
+export function assumption(id: string): number {
+  const found = BY_ID.get(id);
+  if (!found) throw new Error(`Missing assumption: ${id}`);
+  return found.value;
+}
+
+export function assumptionRecord(id: string): Assumption {
+  const found = BY_ID.get(id);
+  if (!found) throw new Error(`Missing assumption: ${id}`);
+  return found;
+}

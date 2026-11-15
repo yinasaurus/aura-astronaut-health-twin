@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", "Segoe UI", sans-serif;
+  --font-mono: "Share Tech Mono", ui-monospace, monospace;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(42, 104, 140, 0.35), transparent 28%),
+    radial-gradient(circle at 90% 10%, rgba(28, 48, 92, 0.45), transparent 24%),
+    #07111c;
+  color: #e8f6ff;
+  font-family: var(--font-sans);
+}
+
+button,
+a,
+input,
+summary {
+  outline-offset: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid #8ef6ff;
+}
+
+.hud-frame {
+  background:
+    linear-gradient(#8ef6ff, #8ef6ff) left top / 16px 1px no-repeat,
+    linear-gradient(#8ef6ff, #8ef6ff) left top / 1px 16px no-repeat,
+    linear-gradient(#8ef6ff, #8ef6ff) right top / 16px 1px no-repeat,
+    linear-gradient(#8ef6ff, #8ef6ff) right top / 1px 16px no-repeat,
+    linear-gradient(#8ef6ff, #8ef6ff) left bottom / 16px 1px no-repeat,
+    linear-gradient(#8ef6ff, #8ef6ff) left bottom / 1px 16px no-repeat,
+    linear-gradient(#8ef6ff, #8ef6ff) right bottom / 16px 1px no-repeat,
+    linear-gradient(#8ef6ff, #8ef6ff) right bottom / 1px 16px no-repeat,
+    rgba(12, 24, 38, 0.92);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

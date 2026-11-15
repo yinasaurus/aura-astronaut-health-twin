@@ -1,0 +1,18 @@
+NASA Data & Resources
+5 Hazards of Human Spaceflight: Basic information from NASA’s human research program on the main hazards that affect humans on space missions. It also provides links to detailed NASA articles and reports related to a specific hazard.
+https://www.nasa.gov/hrp/hazards/
+
+Risks of Human Spaceflight: Basic information from NASA’s human research program on the main risks faced by humans on space missions. It also provides links to detailed NASA articles and reports related to a specific risk.
+https://www.nasa.gov/hrp/risks/
+
+Ongoing HRP Research in Space: Articles from ongoing research on NASA’s human research program.
+https://www.nasa.gov/hrp/ongoing-hrp-research/
+
+Space Agency Partner Resources
+CSA (Canadian Space Agency)
+
+Monitoring Radiation for Astronaut Health: Learn how the CSA is helping monitor space radiation to better protect astronaut health during long-duration missions. This resource highlights Canadian technologies and research used to measure radiation exposure in space and improve our understanding of its effects on the human body.
+https://www.asc-csa.gc.ca/eng/news/articles/2026/2026-02-26-monitoring-radiation-astronaut-health.asp
+
+Why Do We Conduct Science Experiments in Space?: This CSA resource explains how the unique environment of space allows scientists to conduct experiments that cannot be performed on Earth. Learn how research aboard the International Space Station advances our understanding of human health, technology, and the universe. The discoveries made in space help improve life on Earth while supporting future exploration missions.
+https://www.asc-csa.gc.ca/eng/iss/science/why-do-we-conduct-science-experiments-in-space.asp

@@ -1,0 +1,317 @@
+# Sources
+
+AURA's crew series is simulated. No parameter below is a published measurement. `evidenceLevel` is `assumption` and `source` is `ASSUMPTION` for every row until the team supplies a value and a citation together. The local file `data.txt` lists NASA and CSA pages. Those pages were not used as numeric inputs. There is no `data/raw` measurement file in this project.
+
+## Resource pages
+
+- [5 Hazards of Human Spaceflight](https://www.nasa.gov/hrp/hazards/) — NASA Human Research Program. Background on the main hazards that affect humans on space missions, with links to NASA articles. Used here as context only.
+- [Risks of Human Spaceflight](https://www.nasa.gov/hrp/risks/) — NASA Human Research Program. Background on the main risks faced by humans on space missions. Used here as context only.
+- [Ongoing HRP Research in Space](https://www.nasa.gov/hrp/ongoing-hrp-research/) — NASA Human Research Program. Articles from ongoing Human Research Program work. No measurement from this page is used.
+- [Monitoring Radiation for Astronaut Health](https://www.asc-csa.gc.ca/eng/news/articles/2026/2026-02-26-monitoring-radiation-astronaut-health.asp) — Canadian Space Agency. Describes Canadian work to measure radiation exposure and study its effects. No dose value from this page is used.
+- [Why Do We Conduct Science Experiments in Space?](https://www.asc-csa.gc.ca/eng/iss/science/why-do-we-conduct-science-experiments-in-space.asp) — Canadian Space Agency. Explains why research is done in space, including human health. It does not provide an indicator baseline.
+
+## Simulation parameters
+
+| id | value | unit | hazard | evidence | source | rationale |
+| --- | --- | --- | --- | --- | --- | --- |
+| `mission.days` | 180 | day | none | assumption | ASSUMPTION | Length of the scripted Mars-transit demo. Not a flown mission timeline. |
+| `baseline.days` | 14 | day | none | assumption | ASSUMPTION | Personal baseline window. Chosen so the demo has an early reference period. |
+| `trend.days` | 5 | day | none | assumption | ASSUMPTION | Window used for the recent mean and the comparison with the previous window. |
+| `comm.delayMinutes` | 22 | minute | distance | assumption | ASSUMPTION | Default one-way delay control. The product brief described about 22 minutes. Not taken from a cited ephemeris. |
+| `comm.delayMax` | 22 | minute | distance | assumption | ASSUMPTION | Upper end of the delay control in this build. |
+| `validation.crews` | 200 | crew | none | assumption | ASSUMPTION | Number of seeded simulated crews on the validation page. |
+| `validation.eventEarliest` | 40 | day | none | assumption | ASSUMPTION | Earliest mission day an evaluation event may start. |
+| `validation.eventLatest` | 120 | day | none | assumption | ASSUMPTION | Latest mission day an evaluation event may start. |
+| `sim.noiseClampSigma` | 1.1 | sigma | none | assumption | ASSUMPTION | Daily noise is clamped so one extreme draw does not dominate a short mission. |
+| `score.mildZ` | 0.8 | z | none | assumption | ASSUMPTION | Adverse z above this counts as a mild signal inside the compound score. |
+| `score.zScale` | 2.5 | z | none | assumption | ASSUMPTION | Adverse z is divided by this before it enters the score, and then capped at 1. |
+| `score.singleIndicatorZ` | 2.8 | z | none | assumption | ASSUMPTION | Personal-z comparison method flags a day when any adverse z reaches this. Not a clinical limit. |
+| `score.singleSignalFactor` | 0.45 | factor | none | assumption | ASSUMPTION | Shrinks the score when only one indicator is in the mild band, so one mild drift stays quieter. |
+| `score.multiSignalFactor` | 1 | factor | none | assumption | ASSUMPTION | Factor used when two or more indicators in a system are in the mild band. |
+| `score.amber` | 44 | score | none | assumption | ASSUMPTION | Score at or above this is amber. Unvalidated display rule. |
+| `score.red` | 78 | score | none | assumption | ASSUMPTION | Score at or above this is red. Unvalidated display rule. |
+| `score.escalateConfidence` | 0.75 | confidence | none | assumption | ASSUMPTION | Amber can ask for review when confidence is at least this and enough signals agree. |
+| `score.escalateMinSignals` | 3 | signal | none | assumption | ASSUMPTION | Minimum mild signals in one system before an amber result asks for review. |
+| `score.greenConfidence` | 0.7 | confidence | none | assumption | ASSUMPTION | Confidence shown when a system has no mild signal. |
+| `score.confidenceAgreement` | 0.45 | weight | none | assumption | ASSUMPTION | How much the share of mild signals moves confidence. |
+| `score.confidenceTrend` | 0.25 | weight | none | assumption | ASSUMPTION | How much an adverse 5-day trend moves confidence. |
+| `weight.cardiovascular.restingHr` | 1 | weight | gravity | assumption | ASSUMPTION | Relative weight of resting heart rate inside the cardiovascular score. |
+| `weight.cardiovascular.systolicBp` | 0.8 | weight | gravity | assumption | ASSUMPTION | Relative weight of systolic pressure inside the cardiovascular score. |
+| `weight.cardiovascular.diastolicBp` | 0.4 | weight | gravity | assumption | ASSUMPTION | Relative weight of diastolic pressure inside the cardiovascular score. |
+| `weight.cardiovascular.exerciseMin` | 0.35 | weight | gravity | assumption | ASSUMPTION | Relative weight of exercise minutes inside the cardiovascular score. |
+| `weight.musculoskeletal.exerciseMin` | 1 | weight | gravity | assumption | ASSUMPTION | Musculoskeletal score uses exercise minutes only, because this build has no bone or muscle measurement. |
+| `weight.brain.mood` | 1 | weight | isolation | assumption | ASSUMPTION | Relative weight of mood inside the brain and behavioural score. |
+| `weight.brain.sleepHours` | 0.45 | weight | closed | assumption | ASSUMPTION | Relative weight of sleep inside the brain and behavioural score. |
+| `weight.sleep.sleepHours` | 1 | weight | closed | assumption | ASSUMPTION | Relative weight of sleep hours inside the sleep score. |
+| `weight.sleep.mood` | 0.4 | weight | isolation | assumption | ASSUMPTION | Relative weight of mood inside the sleep score. |
+| `weight.immune.radiationDose` | 1 | weight | radiation | assumption | ASSUMPTION | Relative weight of radiation dose rate inside the immune score. |
+| `weight.immune.sleepHours` | 0.4 | weight | closed | assumption | ASSUMPTION | Relative weight of sleep inside the immune score. |
+| `weight.immune.temperature` | 0.3 | weight | closed | assumption | ASSUMPTION | Relative weight of temperature inside the immune score. |
+| `weight.immune.glucose` | 0.25 | weight | closed | assumption | ASSUMPTION | Relative weight of glucose inside the immune score. |
+| `weight.vision.radiationDose` | 1 | weight | radiation | assumption | ASSUMPTION | Vision score uses radiation dose rate only, because this build has no eye measurement. |
+| `indicator.restingHr.center` | 64 | bpm | gravity | assumption | ASSUMPTION | Placeholder center for simulated resting heart rate. Not a reference range. |
+| `indicator.restingHr.sigma` | 1.8 | bpm | gravity | assumption | ASSUMPTION | Placeholder day-to-day spread for resting heart rate. |
+| `indicator.restingHr.spread` | 4 | bpm | gravity | assumption | ASSUMPTION | How far a simulated crew member's own center may sit from the placeholder center. |
+| `indicator.restingHr.driftPerDay` | 0.006 | bpm/day | gravity | assumption | ASSUMPTION | Slow upward drift applied after the baseline window, before context weight. |
+| `indicator.restingHr.min` | 35 | bpm | gravity | assumption | ASSUMPTION | Clamp so the simulator cannot emit a negative or tiny heart rate. |
+| `indicator.restingHr.max` | 140 | bpm | gravity | assumption | ASSUMPTION | Clamp so a stacked event cannot run away without bound. |
+| `indicator.systolicBp.center` | 114 | mmHg | gravity | assumption | ASSUMPTION | Placeholder center for simulated systolic pressure. Not a reference range. |
+| `indicator.systolicBp.sigma` | 2.5 | mmHg | gravity | assumption | ASSUMPTION | Placeholder day-to-day spread for systolic pressure. |
+| `indicator.systolicBp.spread` | 6 | mmHg | gravity | assumption | ASSUMPTION | Crew-to-crew offset for the systolic center. |
+| `indicator.systolicBp.driftPerDay` | 0.005 | mmHg/day | gravity | assumption | ASSUMPTION | Slow upward drift applied after the baseline window. |
+| `indicator.systolicBp.min` | 70 | mmHg | gravity | assumption | ASSUMPTION | Lower clamp for simulated systolic pressure. |
+| `indicator.systolicBp.max` | 180 | mmHg | gravity | assumption | ASSUMPTION | Upper clamp for simulated systolic pressure. |
+| `indicator.diastolicBp.center` | 72 | mmHg | gravity | assumption | ASSUMPTION | Placeholder center for simulated diastolic pressure. Not a reference range. |
+| `indicator.diastolicBp.sigma` | 1.8 | mmHg | gravity | assumption | ASSUMPTION | Placeholder day-to-day spread for diastolic pressure. |
+| `indicator.diastolicBp.spread` | 4 | mmHg | gravity | assumption | ASSUMPTION | Crew-to-crew offset for the diastolic center. |
+| `indicator.diastolicBp.driftPerDay` | 0.003 | mmHg/day | gravity | assumption | ASSUMPTION | Slow upward drift applied after the baseline window. |
+| `indicator.diastolicBp.min` | 40 | mmHg | gravity | assumption | ASSUMPTION | Lower clamp for simulated diastolic pressure. |
+| `indicator.diastolicBp.max` | 120 | mmHg | gravity | assumption | ASSUMPTION | Upper clamp for simulated diastolic pressure. |
+| `indicator.glucose.center` | 90 | mg/dL | closed | assumption | ASSUMPTION | Placeholder center for simulated glucose, stored in mg/dL as a unit choice, not a standard we are citing. |
+| `indicator.glucose.sigma` | 3 | mg/dL | closed | assumption | ASSUMPTION | Placeholder day-to-day spread for glucose. |
+| `indicator.glucose.spread` | 6 | mg/dL | closed | assumption | ASSUMPTION | Crew-to-crew offset for the glucose center. |
+| `indicator.glucose.driftPerDay` | 0.008 | mg/dL/day | closed | assumption | ASSUMPTION | Slow drift applied after the baseline window. |
+| `indicator.glucose.min` | 50 | mg/dL | closed | assumption | ASSUMPTION | Lower clamp for simulated glucose. |
+| `indicator.glucose.max` | 250 | mg/dL | closed | assumption | ASSUMPTION | Upper clamp for simulated glucose. |
+| `indicator.temperature.center` | 36.6 | °C | closed | assumption | ASSUMPTION | Placeholder center for simulated body temperature. |
+| `indicator.temperature.sigma` | 0.05 | °C | closed | assumption | ASSUMPTION | Placeholder day-to-day spread for temperature. |
+| `indicator.temperature.spread` | 0.1 | °C | closed | assumption | ASSUMPTION | Crew-to-crew offset for the temperature center. |
+| `indicator.temperature.driftPerDay` | 0.0003 | °C/day | closed | assumption | ASSUMPTION | Slow drift applied after the baseline window. |
+| `indicator.temperature.min` | 35 | °C | closed | assumption | ASSUMPTION | Lower clamp for simulated temperature. |
+| `indicator.temperature.max` | 40 | °C | closed | assumption | ASSUMPTION | Upper clamp for simulated temperature. |
+| `indicator.sleepHours.center` | 7.4 | hour | closed | assumption | ASSUMPTION | Placeholder center for simulated sleep duration. |
+| `indicator.sleepHours.sigma` | 0.28 | hour | closed | assumption | ASSUMPTION | Placeholder day-to-day spread for sleep. |
+| `indicator.sleepHours.spread` | 0.35 | hour | closed | assumption | ASSUMPTION | Crew-to-crew offset for the sleep center. |
+| `indicator.sleepHours.driftPerDay` | -0.002 | hour/day | closed | assumption | ASSUMPTION | Slow shortening of sleep after the baseline window. |
+| `indicator.sleepHours.min` | 0 | hour | closed | assumption | ASSUMPTION | Sleep cannot be negative. |
+| `indicator.sleepHours.max` | 12 | hour | closed | assumption | ASSUMPTION | Upper clamp for simulated sleep. |
+| `indicator.mood.center` | 7.6 | score | isolation | assumption | ASSUMPTION | Placeholder center on a 0 to 10 mood scale invented for this simulation. |
+| `indicator.mood.sigma` | 0.22 | score | isolation | assumption | ASSUMPTION | Placeholder day-to-day spread for mood. |
+| `indicator.mood.spread` | 0.4 | score | isolation | assumption | ASSUMPTION | Crew-to-crew offset for the mood center. |
+| `indicator.mood.driftPerDay` | -0.0025 | score/day | isolation | assumption | ASSUMPTION | Slow mood decline tied to the isolation weight. |
+| `indicator.mood.distanceDriftPerDay` | -0.001 | score/day | distance | assumption | ASSUMPTION | Extra mood decline tied to the distance-from-Earth weight. |
+| `indicator.mood.min` | 0 | score | isolation | assumption | ASSUMPTION | Lower end of the invented mood scale. |
+| `indicator.mood.max` | 10 | score | isolation | assumption | ASSUMPTION | Upper end of the invented mood scale. |
+| `indicator.radiationDose.center` | 0.18 | mSv/day | radiation | assumption | ASSUMPTION | Placeholder daily dose rate. The screen shows the running total. Drift uses the daily rate, because a running total always rises. |
+| `indicator.radiationDose.sigma` | 0.04 | mSv/day | radiation | assumption | ASSUMPTION | Placeholder day-to-day spread of the daily dose rate. |
+| `indicator.radiationDose.spread` | 0.02 | mSv/day | radiation | assumption | ASSUMPTION | Crew-to-crew offset for the daily dose rate. |
+| `indicator.radiationDose.driftPerDay` | 0 | mSv/day/day | radiation | assumption | ASSUMPTION | The daily rate has no extra slope. Events add dose on top. |
+| `indicator.radiationDose.min` | 0 | mSv/day | radiation | assumption | ASSUMPTION | Daily dose rate cannot be negative. |
+| `indicator.radiationDose.max` | 50 | mSv/day | radiation | assumption | ASSUMPTION | Upper clamp for a simulated daily dose rate. |
+| `indicator.exerciseMin.center` | 80 | minute | gravity | assumption | ASSUMPTION | Placeholder center for simulated exercise time. |
+| `indicator.exerciseMin.sigma` | 6 | minute | gravity | assumption | ASSUMPTION | Placeholder day-to-day spread for exercise. |
+| `indicator.exerciseMin.spread` | 8 | minute | gravity | assumption | ASSUMPTION | Crew-to-crew offset for the exercise center. |
+| `indicator.exerciseMin.driftPerDay` | -0.04 | minute/day | gravity | assumption | ASSUMPTION | Slow decline in exercise minutes after the baseline window. |
+| `indicator.exerciseMin.min` | 0 | minute | gravity | assumption | ASSUMPTION | Exercise time cannot be negative. |
+| `indicator.exerciseMin.max` | 240 | minute | gravity | assumption | ASSUMPTION | Upper clamp for simulated exercise time. |
+| `context.iss.radiation` | 0.8 | weight | radiation | assumption | ASSUMPTION | ISS risk weight for radiation signals. |
+| `context.iss.isolation` | 0.85 | weight | isolation | assumption | ASSUMPTION | ISS risk weight for isolation signals. |
+| `context.iss.distance` | 0.2 | weight | distance | assumption | ASSUMPTION | ISS risk weight for distance-from-Earth signals. |
+| `context.iss.gravity` | 1 | weight | gravity | assumption | ASSUMPTION | ISS risk weight for gravity-field signals. |
+| `context.iss.closed` | 1 | weight | closed | assumption | ASSUMPTION | ISS risk weight for closed-environment signals. |
+| `context.lunar.radiation` | 1 | weight | radiation | assumption | ASSUMPTION | Lunar-base risk weight for radiation signals. |
+| `context.lunar.isolation` | 1 | weight | isolation | assumption | ASSUMPTION | Lunar-base risk weight for isolation signals. |
+| `context.lunar.distance` | 0.6 | weight | distance | assumption | ASSUMPTION | Lunar-base risk weight for distance-from-Earth signals. |
+| `context.lunar.gravity` | 0.7 | weight | gravity | assumption | ASSUMPTION | Lunar-base risk weight for gravity-field signals. |
+| `context.lunar.closed` | 1 | weight | closed | assumption | ASSUMPTION | Lunar-base risk weight for closed-environment signals. |
+| `context.mars.radiation` | 1.1 | weight | radiation | assumption | ASSUMPTION | Mars-transit risk weight for radiation signals. |
+| `context.mars.isolation` | 1.15 | weight | isolation | assumption | ASSUMPTION | Mars-transit risk weight for isolation signals. |
+| `context.mars.distance` | 1.25 | weight | distance | assumption | ASSUMPTION | Mars-transit risk weight for distance-from-Earth signals. |
+| `context.mars.gravity` | 1 | weight | gravity | assumption | ASSUMPTION | Mars-transit risk weight for gravity-field signals. |
+| `context.mars.closed` | 1.05 | weight | closed | assumption | ASSUMPTION | Mars-transit risk weight for closed-environment signals. |
+| `event.solarParticle.duration` | 5 | day | radiation | assumption | ASSUMPTION | How long a solar-particle injection keeps its added daily effects. |
+| `event.solarParticle.restingHr` | 2.97 | bpm | radiation | assumption | ASSUMPTION | Added resting heart rate during a solar-particle injection. About 1.65 placeholder sigmas. |
+| `event.solarParticle.systolicBp` | 4.13 | mmHg | radiation | assumption | ASSUMPTION | Added systolic pressure during a solar-particle injection. |
+| `event.solarParticle.sleepHours` | -0.46 | hour | radiation | assumption | ASSUMPTION | Sleep change during a solar-particle injection. |
+| `event.solarParticle.mood` | -0.16 | score | radiation | assumption | ASSUMPTION | Mood change during a solar-particle injection. Kept smaller than the heart-rate shift so the scripted day stays in the amber band for this seed. |
+| `event.solarParticle.radiationDaily` | 0.066 | mSv/day | radiation | assumption | ASSUMPTION | Extra daily dose during a solar-particle injection. It stays in the running total afterward. |
+| `event.sleepDisruption.duration` | 4 | day | closed | assumption | ASSUMPTION | How long a sleep-disruption injection lasts. |
+| `event.sleepDisruption.sleepHours` | -0.5 | hour | closed | assumption | ASSUMPTION | Sleep change during a sleep-disruption injection. |
+| `event.sleepDisruption.mood` | -0.29 | score | closed | assumption | ASSUMPTION | Mood change during a sleep-disruption injection. |
+| `event.isolationMood.duration` | 6 | day | isolation | assumption | ASSUMPTION | How long an isolation low-mood injection lasts. |
+| `event.isolationMood.mood` | -0.42 | score | isolation | assumption | ASSUMPTION | Mood change during an isolation injection. |
+| `event.isolationMood.sleepHours` | -0.22 | hour | isolation | assumption | ASSUMPTION | Sleep change during an isolation injection. |
+| `population.restingHr.low` | 45 | bpm | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. Not a clinical limit. |
+| `population.restingHr.high` | 100 | bpm | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. Not a clinical limit. |
+| `population.systolicBp.low` | 85 | mmHg | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
+| `population.systolicBp.high` | 150 | mmHg | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
+| `population.diastolicBp.low` | 50 | mmHg | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
+| `population.diastolicBp.high` | 95 | mmHg | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
+| `population.glucose.low` | 65 | mg/dL | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
+| `population.glucose.high` | 160 | mg/dL | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
+| `population.temperature.low` | 35.8 | °C | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
+| `population.temperature.high` | 37.6 | °C | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
+| `population.sleepHours.low` | 4.5 | hour | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
+| `population.sleepHours.high` | 10 | hour | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
+| `population.mood.low` | 3 | score | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
+| `population.mood.high` | 10 | score | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
+| `population.radiationDose.low` | 0 | mSv/day | none | assumption | ASSUMPTION | Assumed daily-dose band used only by the fixed-threshold comparison. It is not applied to the running total. |
+| `population.radiationDose.high` | 1.5 | mSv/day | none | assumption | ASSUMPTION | Assumed daily-dose band used only by the fixed-threshold comparison. |
+| `population.exerciseMin.low` | 20 | minute | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
+| `population.exerciseMin.high` | 200 | minute | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
+
+## Rules that are not a single number
+
+- Personal baseline = mean and sample standard deviation of mission days 1–14 for each astronaut and each indicator.
+- z uses the latest 5-day mean of the compared value, not a single reading. For radiation, the compared value is the daily dose rate. The screen still shows the running total.
+- Sample standard deviation is floored at the placeholder sigma so a very quiet fortnight does not inflate z.
+- Adverse direction: heart rate, blood pressure, glucose, and radiation rate are adverse when high; sleep, mood, and exercise are adverse when low; temperature is adverse in either direction.
+- A system score averages the capped adverse z of the indicators that cleared the mild mark, then multiplies by a smaller factor when only one indicator cleared it.
+- Mission setting (ISS, lunar base, Mars transit) multiplies those weights. It does not rewrite the series.
+- Mood's setting multiplier is the average of the isolation weight and the distance-from-Earth weight.
+- Vision uses radiation dose rate only. Musculoskeletal uses exercise minutes only. Both gaps are called out in the interface.
+- Fixed population bands exist only on the validation page, as the comparison method. They are not clinical limits and they are not used for the crew display.
+
+## To verify
+
+Replace any row below only when you have both a number and a citation. Until then it stays an assumption.
+
+- [ ] `mission.days` — Length of the scripted Mars-transit demo. Not a flown mission timeline.
+- [ ] `baseline.days` — Personal baseline window. Chosen so the demo has an early reference period.
+- [ ] `trend.days` — Window used for the recent mean and the comparison with the previous window.
+- [ ] `comm.delayMinutes` — Default one-way delay control. The product brief described about 22 minutes. Not taken from a cited ephemeris.
+- [ ] `comm.delayMax` — Upper end of the delay control in this build.
+- [ ] `validation.crews` — Number of seeded simulated crews on the validation page.
+- [ ] `validation.eventEarliest` — Earliest mission day an evaluation event may start.
+- [ ] `validation.eventLatest` — Latest mission day an evaluation event may start.
+- [ ] `sim.noiseClampSigma` — Daily noise is clamped so one extreme draw does not dominate a short mission.
+- [ ] `score.mildZ` — Adverse z above this counts as a mild signal inside the compound score.
+- [ ] `score.zScale` — Adverse z is divided by this before it enters the score, and then capped at 1.
+- [ ] `score.singleIndicatorZ` — Personal-z comparison method flags a day when any adverse z reaches this. Not a clinical limit.
+- [ ] `score.singleSignalFactor` — Shrinks the score when only one indicator is in the mild band, so one mild drift stays quieter.
+- [ ] `score.multiSignalFactor` — Factor used when two or more indicators in a system are in the mild band.
+- [ ] `score.amber` — Score at or above this is amber. Unvalidated display rule.
+- [ ] `score.red` — Score at or above this is red. Unvalidated display rule.
+- [ ] `score.escalateConfidence` — Amber can ask for review when confidence is at least this and enough signals agree.
+- [ ] `score.escalateMinSignals` — Minimum mild signals in one system before an amber result asks for review.
+- [ ] `score.greenConfidence` — Confidence shown when a system has no mild signal.
+- [ ] `score.confidenceAgreement` — How much the share of mild signals moves confidence.
+- [ ] `score.confidenceTrend` — How much an adverse 5-day trend moves confidence.
+- [ ] `weight.cardiovascular.restingHr` — Relative weight of resting heart rate inside the cardiovascular score.
+- [ ] `weight.cardiovascular.systolicBp` — Relative weight of systolic pressure inside the cardiovascular score.
+- [ ] `weight.cardiovascular.diastolicBp` — Relative weight of diastolic pressure inside the cardiovascular score.
+- [ ] `weight.cardiovascular.exerciseMin` — Relative weight of exercise minutes inside the cardiovascular score.
+- [ ] `weight.musculoskeletal.exerciseMin` — Musculoskeletal score uses exercise minutes only, because this build has no bone or muscle measurement.
+- [ ] `weight.brain.mood` — Relative weight of mood inside the brain and behavioural score.
+- [ ] `weight.brain.sleepHours` — Relative weight of sleep inside the brain and behavioural score.
+- [ ] `weight.sleep.sleepHours` — Relative weight of sleep hours inside the sleep score.
+- [ ] `weight.sleep.mood` — Relative weight of mood inside the sleep score.
+- [ ] `weight.immune.radiationDose` — Relative weight of radiation dose rate inside the immune score.
+- [ ] `weight.immune.sleepHours` — Relative weight of sleep inside the immune score.
+- [ ] `weight.immune.temperature` — Relative weight of temperature inside the immune score.
+- [ ] `weight.immune.glucose` — Relative weight of glucose inside the immune score.
+- [ ] `weight.vision.radiationDose` — Vision score uses radiation dose rate only, because this build has no eye measurement.
+- [ ] `indicator.restingHr.center` — Placeholder center for simulated resting heart rate. Not a reference range.
+- [ ] `indicator.restingHr.sigma` — Placeholder day-to-day spread for resting heart rate.
+- [ ] `indicator.restingHr.spread` — How far a simulated crew member's own center may sit from the placeholder center.
+- [ ] `indicator.restingHr.driftPerDay` — Slow upward drift applied after the baseline window, before context weight.
+- [ ] `indicator.restingHr.min` — Clamp so the simulator cannot emit a negative or tiny heart rate.
+- [ ] `indicator.restingHr.max` — Clamp so a stacked event cannot run away without bound.
+- [ ] `indicator.systolicBp.center` — Placeholder center for simulated systolic pressure. Not a reference range.
+- [ ] `indicator.systolicBp.sigma` — Placeholder day-to-day spread for systolic pressure.
+- [ ] `indicator.systolicBp.spread` — Crew-to-crew offset for the systolic center.
+- [ ] `indicator.systolicBp.driftPerDay` — Slow upward drift applied after the baseline window.
+- [ ] `indicator.systolicBp.min` — Lower clamp for simulated systolic pressure.
+- [ ] `indicator.systolicBp.max` — Upper clamp for simulated systolic pressure.
+- [ ] `indicator.diastolicBp.center` — Placeholder center for simulated diastolic pressure. Not a reference range.
+- [ ] `indicator.diastolicBp.sigma` — Placeholder day-to-day spread for diastolic pressure.
+- [ ] `indicator.diastolicBp.spread` — Crew-to-crew offset for the diastolic center.
+- [ ] `indicator.diastolicBp.driftPerDay` — Slow upward drift applied after the baseline window.
+- [ ] `indicator.diastolicBp.min` — Lower clamp for simulated diastolic pressure.
+- [ ] `indicator.diastolicBp.max` — Upper clamp for simulated diastolic pressure.
+- [ ] `indicator.glucose.center` — Placeholder center for simulated glucose, stored in mg/dL as a unit choice, not a standard we are citing.
+- [ ] `indicator.glucose.sigma` — Placeholder day-to-day spread for glucose.
+- [ ] `indicator.glucose.spread` — Crew-to-crew offset for the glucose center.
+- [ ] `indicator.glucose.driftPerDay` — Slow drift applied after the baseline window.
+- [ ] `indicator.glucose.min` — Lower clamp for simulated glucose.
+- [ ] `indicator.glucose.max` — Upper clamp for simulated glucose.
+- [ ] `indicator.temperature.center` — Placeholder center for simulated body temperature.
+- [ ] `indicator.temperature.sigma` — Placeholder day-to-day spread for temperature.
+- [ ] `indicator.temperature.spread` — Crew-to-crew offset for the temperature center.
+- [ ] `indicator.temperature.driftPerDay` — Slow drift applied after the baseline window.
+- [ ] `indicator.temperature.min` — Lower clamp for simulated temperature.
+- [ ] `indicator.temperature.max` — Upper clamp for simulated temperature.
+- [ ] `indicator.sleepHours.center` — Placeholder center for simulated sleep duration.
+- [ ] `indicator.sleepHours.sigma` — Placeholder day-to-day spread for sleep.
+- [ ] `indicator.sleepHours.spread` — Crew-to-crew offset for the sleep center.
+- [ ] `indicator.sleepHours.driftPerDay` — Slow shortening of sleep after the baseline window.
+- [ ] `indicator.sleepHours.min` — Sleep cannot be negative.
+- [ ] `indicator.sleepHours.max` — Upper clamp for simulated sleep.
+- [ ] `indicator.mood.center` — Placeholder center on a 0 to 10 mood scale invented for this simulation.
+- [ ] `indicator.mood.sigma` — Placeholder day-to-day spread for mood.
+- [ ] `indicator.mood.spread` — Crew-to-crew offset for the mood center.
+- [ ] `indicator.mood.driftPerDay` — Slow mood decline tied to the isolation weight.
+- [ ] `indicator.mood.distanceDriftPerDay` — Extra mood decline tied to the distance-from-Earth weight.
+- [ ] `indicator.mood.min` — Lower end of the invented mood scale.
+- [ ] `indicator.mood.max` — Upper end of the invented mood scale.
+- [ ] `indicator.radiationDose.center` — Placeholder daily dose rate. The screen shows the running total. Drift uses the daily rate, because a running total always rises.
+- [ ] `indicator.radiationDose.sigma` — Placeholder day-to-day spread of the daily dose rate.
+- [ ] `indicator.radiationDose.spread` — Crew-to-crew offset for the daily dose rate.
+- [ ] `indicator.radiationDose.driftPerDay` — The daily rate has no extra slope. Events add dose on top.
+- [ ] `indicator.radiationDose.min` — Daily dose rate cannot be negative.
+- [ ] `indicator.radiationDose.max` — Upper clamp for a simulated daily dose rate.
+- [ ] `indicator.exerciseMin.center` — Placeholder center for simulated exercise time.
+- [ ] `indicator.exerciseMin.sigma` — Placeholder day-to-day spread for exercise.
+- [ ] `indicator.exerciseMin.spread` — Crew-to-crew offset for the exercise center.
+- [ ] `indicator.exerciseMin.driftPerDay` — Slow decline in exercise minutes after the baseline window.
+- [ ] `indicator.exerciseMin.min` — Exercise time cannot be negative.
+- [ ] `indicator.exerciseMin.max` — Upper clamp for simulated exercise time.
+- [ ] `context.iss.radiation` — ISS risk weight for radiation signals.
+- [ ] `context.iss.isolation` — ISS risk weight for isolation signals.
+- [ ] `context.iss.distance` — ISS risk weight for distance-from-Earth signals.
+- [ ] `context.iss.gravity` — ISS risk weight for gravity-field signals.
+- [ ] `context.iss.closed` — ISS risk weight for closed-environment signals.
+- [ ] `context.lunar.radiation` — Lunar-base risk weight for radiation signals.
+- [ ] `context.lunar.isolation` — Lunar-base risk weight for isolation signals.
+- [ ] `context.lunar.distance` — Lunar-base risk weight for distance-from-Earth signals.
+- [ ] `context.lunar.gravity` — Lunar-base risk weight for gravity-field signals.
+- [ ] `context.lunar.closed` — Lunar-base risk weight for closed-environment signals.
+- [ ] `context.mars.radiation` — Mars-transit risk weight for radiation signals.
+- [ ] `context.mars.isolation` — Mars-transit risk weight for isolation signals.
+- [ ] `context.mars.distance` — Mars-transit risk weight for distance-from-Earth signals.
+- [ ] `context.mars.gravity` — Mars-transit risk weight for gravity-field signals.
+- [ ] `context.mars.closed` — Mars-transit risk weight for closed-environment signals.
+- [ ] `event.solarParticle.duration` — How long a solar-particle injection keeps its added daily effects.
+- [ ] `event.solarParticle.restingHr` — Added resting heart rate during a solar-particle injection. About 1.65 placeholder sigmas.
+- [ ] `event.solarParticle.systolicBp` — Added systolic pressure during a solar-particle injection.
+- [ ] `event.solarParticle.sleepHours` — Sleep change during a solar-particle injection.
+- [ ] `event.solarParticle.mood` — Mood change during a solar-particle injection. Kept smaller than the heart-rate shift so the scripted day stays in the amber band for this seed.
+- [ ] `event.solarParticle.radiationDaily` — Extra daily dose during a solar-particle injection. It stays in the running total afterward.
+- [ ] `event.sleepDisruption.duration` — How long a sleep-disruption injection lasts.
+- [ ] `event.sleepDisruption.sleepHours` — Sleep change during a sleep-disruption injection.
+- [ ] `event.sleepDisruption.mood` — Mood change during a sleep-disruption injection.
+- [ ] `event.isolationMood.duration` — How long an isolation low-mood injection lasts.
+- [ ] `event.isolationMood.mood` — Mood change during an isolation injection.
+- [ ] `event.isolationMood.sleepHours` — Sleep change during an isolation injection.
+- [ ] `population.restingHr.low` — Assumed band used only by the fixed-threshold comparison. Not a clinical limit.
+- [ ] `population.restingHr.high` — Assumed band used only by the fixed-threshold comparison. Not a clinical limit.
+- [ ] `population.systolicBp.low` — Assumed band used only by the fixed-threshold comparison.
+- [ ] `population.systolicBp.high` — Assumed band used only by the fixed-threshold comparison.
+- [ ] `population.diastolicBp.low` — Assumed band used only by the fixed-threshold comparison.
+- [ ] `population.diastolicBp.high` — Assumed band used only by the fixed-threshold comparison.
+- [ ] `population.glucose.low` — Assumed band used only by the fixed-threshold comparison.
+- [ ] `population.glucose.high` — Assumed band used only by the fixed-threshold comparison.
+- [ ] `population.temperature.low` — Assumed band used only by the fixed-threshold comparison.
+- [ ] `population.temperature.high` — Assumed band used only by the fixed-threshold comparison.
+- [ ] `population.sleepHours.low` — Assumed band used only by the fixed-threshold comparison.
+- [ ] `population.sleepHours.high` — Assumed band used only by the fixed-threshold comparison.
+- [ ] `population.mood.low` — Assumed band used only by the fixed-threshold comparison.
+- [ ] `population.mood.high` — Assumed band used only by the fixed-threshold comparison.
+- [ ] `population.radiationDose.low` — Assumed daily-dose band used only by the fixed-threshold comparison. It is not applied to the running total.
+- [ ] `population.radiationDose.high` — Assumed daily-dose band used only by the fixed-threshold comparison.
+- [ ] `population.exerciseMin.low` — Assumed band used only by the fixed-threshold comparison.
+- [ ] `population.exerciseMin.high` — Assumed band used only by the fixed-threshold comparison.
+
+- [ ] Confirm the 22-minute one-way delay against a cited Mars distance and link budget before anyone describes it as a fact.
+- [ ] Confirm that a 14-day personal baseline and a 5-day trend are acceptable to the flight-surgeon reviewers you show this to.
+- [ ] Do not describe the validation chart as a clinical study. It is a comparison of three rules on simulated crews.
+
+## Paper citations
+
+No paper citation is attached in this build. Add one here only with the number it supports.
+
+| Placeholder | Number it would support | Citation | Status |
+| --- | --- | --- | --- |
+| P1 |  |  | TO ADD |
+| P2 |  |  | TO ADD |
+| P3 |  |  | TO ADD |
