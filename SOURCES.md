@@ -28,7 +28,14 @@ AURA's crew series is simulated. No parameter below is a published measurement. 
 | `score.singleIndicatorZ` | 2.8 | z | none | assumption | ASSUMPTION | Personal-z comparison method flags a day when any adverse z reaches this. Not a clinical limit. |
 | `score.singleSignalFactor` | 0.45 | factor | none | assumption | ASSUMPTION | Shrinks the score when only one indicator is in the mild band, so one mild drift stays quieter. |
 | `score.multiSignalFactor` | 1 | factor | none | assumption | ASSUMPTION | Factor used when two or more indicators in a system are in the mild band. |
-| `score.amber` | 44 | score | none | assumption | ASSUMPTION | Score at or above this is amber. Unvalidated display rule. |
+| `score.amber` | 44 | score | none | assumption | ASSUMPTION | Raw score at or above this is the amber band. The crew display waits for the persistence rule before it shows that band. |
+| `score.persistMinSignals` | 2 | signal | none | assumption | ASSUMPTION | A system is confirmed only when at least this many mild signals are trending the adverse way. One signal is not enough. |
+| `score.persistDays` | 3 | day | none | assumption | ASSUMPTION | Consecutive confirmed days a system must hold before the crew display and the compound rule count it. The validation page sweeps the candidates below and this stored length is the one with the fewest false alarms per detected event among lengths that still lead the injected event. |
+| `sweep.persistDays.1` | 1 | day | none | assumption | ASSUMPTION | Shortest persistence length in the validation sweep. |
+| `sweep.persistDays.2` | 2 | day | none | assumption | ASSUMPTION | Second persistence length in the validation sweep. |
+| `sweep.persistDays.3` | 3 | day | none | assumption | ASSUMPTION | Third persistence length in the validation sweep. |
+| `sweep.persistDays.4` | 4 | day | none | assumption | ASSUMPTION | Fourth persistence length in the validation sweep. |
+| `sweep.persistDays.5` | 5 | day | none | assumption | ASSUMPTION | Longest persistence length in the validation sweep. |
 | `score.red` | 78 | score | none | assumption | ASSUMPTION | Score at or above this is red. Unvalidated display rule. |
 | `score.escalateConfidence` | 0.75 | confidence | none | assumption | ASSUMPTION | Amber can ask for review when confidence is at least this and enough signals agree. |
 | `score.escalateMinSignals` | 3 | signal | none | assumption | ASSUMPTION | Minimum mild signals in one system before an amber result asks for review. |
@@ -131,24 +138,24 @@ AURA's crew series is simulated. No parameter below is a published measurement. 
 | `event.isolationMood.duration` | 6 | day | isolation | assumption | ASSUMPTION | How long an isolation low-mood injection lasts. |
 | `event.isolationMood.mood` | -0.42 | score | isolation | assumption | ASSUMPTION | Mood change during an isolation injection. |
 | `event.isolationMood.sleepHours` | -0.22 | hour | isolation | assumption | ASSUMPTION | Sleep change during an isolation injection. |
-| `population.restingHr.low` | 45 | bpm | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. Not a clinical limit. |
-| `population.restingHr.high` | 100 | bpm | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. Not a clinical limit. |
-| `population.systolicBp.low` | 85 | mmHg | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
-| `population.systolicBp.high` | 150 | mmHg | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
-| `population.diastolicBp.low` | 50 | mmHg | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
-| `population.diastolicBp.high` | 95 | mmHg | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
-| `population.glucose.low` | 65 | mg/dL | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
-| `population.glucose.high` | 160 | mg/dL | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
-| `population.temperature.low` | 35.8 | °C | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
-| `population.temperature.high` | 37.6 | °C | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
-| `population.sleepHours.low` | 4.5 | hour | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
-| `population.sleepHours.high` | 10 | hour | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
-| `population.mood.low` | 3 | score | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
-| `population.mood.high` | 10 | score | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
-| `population.radiationDose.low` | 0 | mSv/day | none | assumption | ASSUMPTION | Assumed daily-dose band used only by the fixed-threshold comparison. It is not applied to the running total. |
-| `population.radiationDose.high` | 1.5 | mSv/day | none | assumption | ASSUMPTION | Assumed daily-dose band used only by the fixed-threshold comparison. |
-| `population.exerciseMin.low` | 20 | minute | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
-| `population.exerciseMin.high` | 200 | minute | none | assumption | ASSUMPTION | Assumed band used only by the fixed-threshold comparison. |
+| `population.restingHr.low` | 60 | bpm | none | assumption | ASSUMPTION | Conventional adult resting heart-rate floor, used as a reference-style band. Assumption only: no citation is attached, and this is not a clinical limit. |
+| `population.restingHr.high` | 100 | bpm | none | assumption | ASSUMPTION | Conventional adult resting heart-rate ceiling, used as a reference-style band. Assumption only, not a cited limit. |
+| `population.systolicBp.low` | 90 | mmHg | none | assumption | ASSUMPTION | Traditional clinic-style systolic floor. Assumption only. Not moved to create detections. |
+| `population.systolicBp.high` | 140 | mmHg | none | assumption | ASSUMPTION | Traditional clinic-style systolic ceiling near the older 140 mmHg teaching threshold. Assumption only. The tighter under-120 category was not used. |
+| `population.diastolicBp.low` | 60 | mmHg | none | assumption | ASSUMPTION | Traditional clinic-style diastolic floor. Assumption only. |
+| `population.diastolicBp.high` | 90 | mmHg | none | assumption | ASSUMPTION | Traditional clinic-style diastolic ceiling near the older 90 mmHg teaching threshold. Assumption only. |
+| `population.glucose.low` | 70 | mg/dL | none | assumption | ASSUMPTION | Conventional fasting-glucose floor used as a reference-style band. The simulator does not label samples as fasting. Assumption only, not a cited lab range. |
+| `population.glucose.high` | 99 | mg/dL | none | assumption | ASSUMPTION | Conventional fasting-glucose ceiling used as a reference-style band. Not a claim that these samples are fasting, and not fit to the detection chart. |
+| `population.temperature.low` | 36.1 | °C | none | assumption | ASSUMPTION | Conventional oral-temperature floor used as a reference-style band. Assumption only. |
+| `population.temperature.high` | 37.2 | °C | none | assumption | ASSUMPTION | Conventional oral-temperature ceiling used as a reference-style band. Assumption only. |
+| `population.sleepHours.low` | 7 | hour | none | assumption | ASSUMPTION | Low end of the often-taught 7 to 9 hour adult sleep range. Assumption only, not a cited guideline. |
+| `population.sleepHours.high` | 9 | hour | none | assumption | ASSUMPTION | High end of the often-taught 7 to 9 hour adult sleep range. Assumption only. |
+| `population.mood.low` | 0 | score | none | assumption | ASSUMPTION | This 0 to 10 mood scale is invented. No conventional reference range exists, so the fixed rule uses the whole scale and does not flag mood. |
+| `population.mood.high` | 10 | score | none | assumption | ASSUMPTION | Upper end of the invented mood scale. There is no conventional population range to apply. |
+| `population.radiationDose.low` | 0 | mSv/day | none | assumption | ASSUMPTION | Daily dose rate cannot be below zero. The fixed rule uses the daily rate, not the running total. |
+| `population.radiationDose.high` | 1 | mSv/day | none | assumption | ASSUMPTION | Round daily ceiling of 1 mSv. A terrestrial or occupational annual limit spread across a day would sit under this simulator's cruise-rate assumption and would flag that cruise rate rather than injected events, so it was not used. This ceiling was not lowered to create detections. Assumption only, not a flight limit. |
+| `population.exerciseMin.low` | 21 | minute | none | assumption | ASSUMPTION | About 150 minutes a week spread over seven days, rounded, used as a conventional activity floor. Assumption only. |
+| `population.exerciseMin.high` | 300 | minute | none | assumption | ASSUMPTION | No conventional daily maximum is applied. This loose ceiling is an assumption and was not set near the simulated values. |
 
 ## Rules that are not a single number
 
@@ -157,10 +164,11 @@ AURA's crew series is simulated. No parameter below is a published measurement. 
 - Sample standard deviation is floored at the placeholder sigma so a very quiet fortnight does not inflate z.
 - Adverse direction: heart rate, blood pressure, glucose, and radiation rate are adverse when high; sleep, mood, and exercise are adverse when low; temperature is adverse in either direction.
 - A system score averages the capped adverse z of the indicators that cleared the mild mark, then multiplies by a smaller factor when only one indicator cleared it.
+- The crew display confirms a system only when its score is in the amber or red band, at least two mild signals are trending the adverse way, and that pattern has held for the stored persistence length. The validation page sweeps those lengths and does not hardcode the chart.
 - Mission setting (ISS, lunar base, Mars transit) multiplies those weights. It does not rewrite the series.
 - Mood's setting multiplier is the average of the isolation weight and the distance-from-Earth weight.
 - Vision uses radiation dose rate only. Musculoskeletal uses exercise minutes only. Both gaps are called out in the interface.
-- Fixed population bands exist only on the validation page, as the comparison method. They are not clinical limits and they are not used for the crew display.
+- Fixed population bands exist only on the validation page, as the comparison method. They are reference-style assumptions, not clinical limits, and they are not used for the crew display.
 
 ## To verify
 
@@ -180,7 +188,14 @@ Replace any row below only when you have both a number and a citation. Until the
 - [ ] `score.singleIndicatorZ` — Personal-z comparison method flags a day when any adverse z reaches this. Not a clinical limit.
 - [ ] `score.singleSignalFactor` — Shrinks the score when only one indicator is in the mild band, so one mild drift stays quieter.
 - [ ] `score.multiSignalFactor` — Factor used when two or more indicators in a system are in the mild band.
-- [ ] `score.amber` — Score at or above this is amber. Unvalidated display rule.
+- [ ] `score.amber` — Raw score at or above this is the amber band. The crew display waits for the persistence rule before it shows that band.
+- [ ] `score.persistMinSignals` — A system is confirmed only when at least this many mild signals are trending the adverse way. One signal is not enough.
+- [ ] `score.persistDays` — Consecutive confirmed days a system must hold before the crew display and the compound rule count it. The validation page sweeps the candidates below and this stored length is the one with the fewest false alarms per detected event among lengths that still lead the injected event.
+- [ ] `sweep.persistDays.1` — Shortest persistence length in the validation sweep.
+- [ ] `sweep.persistDays.2` — Second persistence length in the validation sweep.
+- [ ] `sweep.persistDays.3` — Third persistence length in the validation sweep.
+- [ ] `sweep.persistDays.4` — Fourth persistence length in the validation sweep.
+- [ ] `sweep.persistDays.5` — Longest persistence length in the validation sweep.
 - [ ] `score.red` — Score at or above this is red. Unvalidated display rule.
 - [ ] `score.escalateConfidence` — Amber can ask for review when confidence is at least this and enough signals agree.
 - [ ] `score.escalateMinSignals` — Minimum mild signals in one system before an amber result asks for review.
@@ -283,24 +298,24 @@ Replace any row below only when you have both a number and a citation. Until the
 - [ ] `event.isolationMood.duration` — How long an isolation low-mood injection lasts.
 - [ ] `event.isolationMood.mood` — Mood change during an isolation injection.
 - [ ] `event.isolationMood.sleepHours` — Sleep change during an isolation injection.
-- [ ] `population.restingHr.low` — Assumed band used only by the fixed-threshold comparison. Not a clinical limit.
-- [ ] `population.restingHr.high` — Assumed band used only by the fixed-threshold comparison. Not a clinical limit.
-- [ ] `population.systolicBp.low` — Assumed band used only by the fixed-threshold comparison.
-- [ ] `population.systolicBp.high` — Assumed band used only by the fixed-threshold comparison.
-- [ ] `population.diastolicBp.low` — Assumed band used only by the fixed-threshold comparison.
-- [ ] `population.diastolicBp.high` — Assumed band used only by the fixed-threshold comparison.
-- [ ] `population.glucose.low` — Assumed band used only by the fixed-threshold comparison.
-- [ ] `population.glucose.high` — Assumed band used only by the fixed-threshold comparison.
-- [ ] `population.temperature.low` — Assumed band used only by the fixed-threshold comparison.
-- [ ] `population.temperature.high` — Assumed band used only by the fixed-threshold comparison.
-- [ ] `population.sleepHours.low` — Assumed band used only by the fixed-threshold comparison.
-- [ ] `population.sleepHours.high` — Assumed band used only by the fixed-threshold comparison.
-- [ ] `population.mood.low` — Assumed band used only by the fixed-threshold comparison.
-- [ ] `population.mood.high` — Assumed band used only by the fixed-threshold comparison.
-- [ ] `population.radiationDose.low` — Assumed daily-dose band used only by the fixed-threshold comparison. It is not applied to the running total.
-- [ ] `population.radiationDose.high` — Assumed daily-dose band used only by the fixed-threshold comparison.
-- [ ] `population.exerciseMin.low` — Assumed band used only by the fixed-threshold comparison.
-- [ ] `population.exerciseMin.high` — Assumed band used only by the fixed-threshold comparison.
+- [ ] `population.restingHr.low` — Conventional adult resting heart-rate floor, used as a reference-style band. Assumption only: no citation is attached, and this is not a clinical limit.
+- [ ] `population.restingHr.high` — Conventional adult resting heart-rate ceiling, used as a reference-style band. Assumption only, not a cited limit.
+- [ ] `population.systolicBp.low` — Traditional clinic-style systolic floor. Assumption only. Not moved to create detections.
+- [ ] `population.systolicBp.high` — Traditional clinic-style systolic ceiling near the older 140 mmHg teaching threshold. Assumption only. The tighter under-120 category was not used.
+- [ ] `population.diastolicBp.low` — Traditional clinic-style diastolic floor. Assumption only.
+- [ ] `population.diastolicBp.high` — Traditional clinic-style diastolic ceiling near the older 90 mmHg teaching threshold. Assumption only.
+- [ ] `population.glucose.low` — Conventional fasting-glucose floor used as a reference-style band. The simulator does not label samples as fasting. Assumption only, not a cited lab range.
+- [ ] `population.glucose.high` — Conventional fasting-glucose ceiling used as a reference-style band. Not a claim that these samples are fasting, and not fit to the detection chart.
+- [ ] `population.temperature.low` — Conventional oral-temperature floor used as a reference-style band. Assumption only.
+- [ ] `population.temperature.high` — Conventional oral-temperature ceiling used as a reference-style band. Assumption only.
+- [ ] `population.sleepHours.low` — Low end of the often-taught 7 to 9 hour adult sleep range. Assumption only, not a cited guideline.
+- [ ] `population.sleepHours.high` — High end of the often-taught 7 to 9 hour adult sleep range. Assumption only.
+- [ ] `population.mood.low` — This 0 to 10 mood scale is invented. No conventional reference range exists, so the fixed rule uses the whole scale and does not flag mood.
+- [ ] `population.mood.high` — Upper end of the invented mood scale. There is no conventional population range to apply.
+- [ ] `population.radiationDose.low` — Daily dose rate cannot be below zero. The fixed rule uses the daily rate, not the running total.
+- [ ] `population.radiationDose.high` — Round daily ceiling of 1 mSv. A terrestrial or occupational annual limit spread across a day would sit under this simulator's cruise-rate assumption and would flag that cruise rate rather than injected events, so it was not used. This ceiling was not lowered to create detections. Assumption only, not a flight limit.
+- [ ] `population.exerciseMin.low` — About 150 minutes a week spread over seven days, rounded, used as a conventional activity floor. Assumption only.
+- [ ] `population.exerciseMin.high` — No conventional daily maximum is applied. This loose ceiling is an assumption and was not set near the simulated values.
 
 - [ ] Confirm the 22-minute one-way delay against a cited Mars distance and link budget before anyone describes it as a fact.
 - [ ] Confirm that a 14-day personal baseline and a 5-day trend are acceptable to the flight-surgeon reviewers you show this to.

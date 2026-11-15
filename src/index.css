@@ -32,6 +32,12 @@ summary {
   outline: 2px solid #8ef6ff;
 }
 
+.system-button:focus,
+.system-button:focus-visible {
+  outline: 3px solid #ffe08a;
+  outline-offset: 3px;
+}
+
 .hud-frame {
   background:
     linear-gradient(#8ef6ff, #8ef6ff) left top / 16px 1px no-repeat,

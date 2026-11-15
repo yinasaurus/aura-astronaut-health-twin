@@ -16,7 +16,7 @@ export function Shell() {
         Skip to content
       </a>
       <header className="border-b border-[#245066]">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-1.5">
           <NavLink to="/" className="font-mono text-lg tracking-[0.22em]">
             AURA
           </NavLink>
@@ -35,9 +35,9 @@ export function Shell() {
             ))}
           </nav>
         </div>
-        <p className="bg-[#102536] px-4 py-2 text-center text-sm text-[#e8f6ff]">{DISCLAIMER}</p>
+        <p className="bg-[#102536] px-4 py-1 text-center text-xs leading-5 text-[#e8f6ff]">{DISCLAIMER}</p>
       </header>
-      <main id="main" className="mx-auto max-w-6xl px-4 py-6">
+      <main id="main" className="mx-auto max-w-6xl px-4 py-3">
         <Outlet />
       </main>
     </div>

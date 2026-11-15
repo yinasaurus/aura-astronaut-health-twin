@@ -32,10 +32,11 @@ ${rows}
 - Sample standard deviation is floored at the placeholder sigma so a very quiet fortnight does not inflate z.
 - Adverse direction: heart rate, blood pressure, glucose, and radiation rate are adverse when high; sleep, mood, and exercise are adverse when low; temperature is adverse in either direction.
 - A system score averages the capped adverse z of the indicators that cleared the mild mark, then multiplies by a smaller factor when only one indicator cleared it.
+- The crew display confirms a system only when its score is in the amber or red band, at least two mild signals are trending the adverse way, and that pattern has held for the stored persistence length. The validation page sweeps those lengths and does not hardcode the chart.
 - Mission setting (ISS, lunar base, Mars transit) multiplies those weights. It does not rewrite the series.
 - Mood's setting multiplier is the average of the isolation weight and the distance-from-Earth weight.
 - Vision uses radiation dose rate only. Musculoskeletal uses exercise minutes only. Both gaps are called out in the interface.
-- Fixed population bands exist only on the validation page, as the comparison method. They are not clinical limits and they are not used for the crew display.
+- Fixed population bands exist only on the validation page, as the comparison method. They are reference-style assumptions, not clinical limits, and they are not used for the crew display.
 
 ## To verify
 

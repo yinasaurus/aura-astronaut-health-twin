@@ -169,12 +169,19 @@ export function BodyTwin({ levels }: { levels: Record<BodySystem, RiskLevel> }) 
 
   return (
     <div className="hud-frame flex flex-col">
-      <div className="flex items-center justify-between px-4 pt-3">
+      <div className="flex items-center justify-between px-4 py-1.5">
         <p className="font-mono text-xs tracking-[0.18em] text-[#9ad7ea]">BODY TWIN</p>
         <p className="text-xs text-[#d5e7f4]">{showGhost ? "Ghost shows the baseline silhouette" : "Baseline ghost hidden"}</p>
       </div>
-      <div className="h-[460px]">
-        <Canvas camera={{ position: [1.7, 0.7, 3.35], fov: 32 }} dpr={[1, 1.75]}>
+      <div className="h-[clamp(15rem,calc(100dvh-20rem),28.75rem)]">
+        <Canvas
+          camera={{ position: [1.7, 0.7, 3.35], fov: 32 }}
+          dpr={[1, 1.75]}
+          onCreated={({ gl }) => {
+            gl.domElement.setAttribute("role", "img");
+            gl.domElement.setAttribute("aria-label", "Simulated astronaut body twin");
+          }}
+        >
           <Scene
             levels={levels}
             selected={selected}
@@ -184,7 +191,7 @@ export function BodyTwin({ levels }: { levels: Record<BodySystem, RiskLevel> }) 
           />
         </Canvas>
       </div>
-      <div className="grid grid-cols-2 gap-2 p-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-2 p-2 sm:grid-cols-3">
         {SYSTEMS.map((system) => {
           const Icon = ICONS[system];
           const chip = levelChip(levels[system]);
@@ -195,7 +202,7 @@ export function BodyTwin({ levels }: { levels: Record<BodySystem, RiskLevel> }) 
               type="button"
               aria-pressed={active}
               onClick={() => setSystem(system)}
-              className={`flex items-center gap-2 rounded-md border px-2 py-2 text-left ${active ? "border-[#8ef6ff]" : "border-[#245066]"}`}
+              className={`system-button flex items-center gap-2 rounded-md border px-2 py-1.5 text-left ${active ? "border-[#8ef6ff]" : "border-[#245066]"}`}
             >
               <Icon aria-hidden="true" className="size-4 shrink-0 text-[#8ef6ff]" />
               <span className="min-w-0">

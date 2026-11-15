@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { assumption } from "../data/assumptions";
 import { crewById } from "../data/crew";
 import { buildPacket } from "../engine/packet";
@@ -32,6 +32,16 @@ export function PacketDrawer() {
   const log = useMission((state) => state.log);
   const { stats, systems } = useAssessment();
   const [copyNote, setCopyNote] = useState("");
+  const [pdfNote, setPdfNote] = useState("");
+  const textRef = useRef<HTMLTextAreaElement>(null);
+
+  function showCopyFallback() {
+    setCopyNote("Clipboard was blocked. Select the text above and copy it.");
+    const area = textRef.current;
+    if (!area) return;
+    area.focus();
+    area.select();
+  }
 
   const text = buildPacket({
     crew: crewById(crewId),
@@ -70,24 +80,52 @@ export function PacketDrawer() {
             Close
           </button>
         </div>
-        <textarea readOnly className="mt-3 min-h-0 flex-1 rounded-md border border-[#245066] bg-[#07111c] p-3 font-mono text-xs leading-5 text-[#e8f6ff]" value={text} />
-        <div className="mt-3 flex flex-wrap gap-2">
+        <textarea
+          ref={textRef}
+          readOnly
+          className="mt-3 min-h-0 flex-1 rounded-md border border-[#245066] bg-[#07111c] p-3 font-mono text-xs leading-5 text-[#e8f6ff]"
+          value={text}
+        />
+        <div className="mt-3 flex flex-wrap items-center gap-2">
           <button
             type="button"
             className="rounded-md bg-[#8ef6ff] px-3 py-2 text-sm font-semibold text-[#04202a]"
             onClick={() => {
-              void navigator.clipboard.writeText(text).then(
+              const write = navigator.clipboard?.writeText;
+              if (!write) {
+                showCopyFallback();
+                return;
+              }
+              void write.call(navigator.clipboard, text).then(
                 () => setCopyNote("Copied."),
-                () => setCopyNote("Clipboard was blocked. Select the text above and copy it."),
+                () => showCopyFallback(),
               );
             }}
           >
             Copy text
           </button>
-          <button type="button" className="rounded-md border border-[#8ef6ff] px-3 py-2 text-sm" onClick={() => void downloadPdf(text, day)}>
+          {copyNote && (
+            <p className="text-sm text-[#d5e7f4]" role="status">
+              {copyNote}
+            </p>
+          )}
+          <button
+            type="button"
+            className="rounded-md border border-[#8ef6ff] px-3 py-2 text-sm"
+            onClick={() => {
+              void downloadPdf(text, day).then(
+                () => setPdfNote("Downloaded"),
+                () => setPdfNote("The PDF did not download."),
+              );
+            }}
+          >
             Export PDF
           </button>
-          {copyNote && <p className="self-center text-sm text-[#d5e7f4]">{copyNote}</p>}
+          {pdfNote && (
+            <p className="text-sm text-[#d5e7f4]" role="status">
+              {pdfNote}
+            </p>
+          )}
         </div>
       </section>
     </div>

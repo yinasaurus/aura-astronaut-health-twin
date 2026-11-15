@@ -19,6 +19,7 @@ const DEMO_STEPS = [
   "The open system names the exact signals behind the score.",
   "Comm delay is on. Self-care prompts are in the panel, and the flight-surgeon note is queued.",
   "Delay is off. The flight surgeon packet is open.",
+  "The flight surgeon packet stays open. End of the story.",
 ];
 
 const CONTEXTS: MissionContext[] = ["iss", "lunar", "mars"];
@@ -52,17 +53,19 @@ export function MissionView({ demoStep }: { demoStep?: number }) {
   return (
     <div>
       {demoStep !== undefined && (
-        <div className="mb-4 h-24 overflow-hidden rounded-md border border-[#8ef6ff] px-4 py-3" aria-live="polite">
-          <p className="font-mono text-xs tracking-[0.14em] text-[#9ad7ea]">DEMO · STEP {demoStep + 1} OF 6 · PRESS R TO RESET</p>
+        <div className="mb-3 h-20 overflow-hidden rounded-md border border-[#8ef6ff] px-4 py-2" aria-live="polite">
+          <p className="font-mono text-xs tracking-[0.14em] text-[#9ad7ea]">
+            DEMO · STEP {demoStep + 1} OF {DEMO_STEPS.length} · PRESS R TO RESET
+          </p>
           <p className="mt-1 text-sm leading-5">{DEMO_STEPS[demoStep]}</p>
           <div className="mt-2 h-1 bg-[#123246]">
-            <div className="h-full bg-[#8ef6ff]" style={{ width: `${((demoStep + 1) / 6) * 100}%` }} />
+            <div className="h-full bg-[#8ef6ff]" style={{ width: `${((demoStep + 1) / DEMO_STEPS.length) * 100}%` }} />
           </div>
         </div>
       )}
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h1 className="font-mono text-3xl tracking-[0.16em]">AURA</h1>
+          <h1 className="font-mono text-2xl tracking-[0.16em]">AURA</h1>
           <p className="text-sm text-[#d5e7f4]">
             {crew.name}, {crew.role}. Day {day}. Baseline from days 1–14. {CONTEXT_LABEL[context]} weights.
           </p>

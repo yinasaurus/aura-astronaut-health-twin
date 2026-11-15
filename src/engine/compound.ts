@@ -10,7 +10,7 @@ function hazardWeight(context: MissionContext, id: IndicatorId): number {
   return assumption(`context.${context}.${PRIMARY_HAZARD[id]}`);
 }
 
-function trendIsAdverse(stat: IndicatorStat): boolean {
+export function trendIsAdverse(stat: IndicatorStat): boolean {
   const direction = ADVERSE_DIRECTION[stat.id];
   if (direction === "high") return stat.trend5 > 0;
   if (direction === "low") return stat.trend5 < 0;
@@ -129,5 +129,46 @@ export function scoreSystems(stats: IndicatorStat[], context: MissionContext, da
     }
 
     return { system, score, level, confidence, reasons, escalate, contributions };
+  });
+}
+
+export function adverseTrendCount(system: SystemRisk, stats: IndicatorStat[]): number {
+  return system.contributions.filter((item) => item.included).filter((item) => {
+    const stat = stats.find((row) => row.id === item.id);
+    return stat ? trendIsAdverse(stat) : false;
+  }).length;
+}
+
+/** Amber or red, with enough mild signals still moving the adverse way. */
+export function dayConfirmed(system: SystemRisk, stats: IndicatorStat[]): boolean {
+  return system.score >= assumption("score.amber") && adverseTrendCount(system, stats) >= assumption("score.persistMinSignals");
+}
+
+export function streakHeld(flags: boolean[], persistDays: number): boolean {
+  if (persistDays <= 0 || flags.length < persistDays) return false;
+  for (let index = flags.length - persistDays; index < flags.length; index += 1) {
+    if (!flags[index]) return false;
+  }
+  return true;
+}
+
+export function applyPersistence(frames: { stats: IndicatorStat[]; systems: SystemRisk[] }[], persistDays: number): SystemRisk[] {
+  const today = frames[frames.length - 1];
+  if (!today) return [];
+  return today.systems.map((system) => {
+    const flags = frames.map((frame) => {
+      const match = frame.systems.find((item) => item.system === system.system);
+      return match ? dayConfirmed(match, frame.stats) : false;
+    });
+    if (system.level === "green" || streakHeld(flags, persistDays)) return system;
+    return {
+      ...system,
+      level: "green" as const,
+      escalate: false,
+      reasons: [
+        ...system.reasons,
+        `The score is in a watch band, but it is not confirmed. Confirmation needs at least ${assumption("score.persistMinSignals")} mild signals trending the adverse way, on this system, for ${persistDays} consecutive days.`,
+      ],
+    };
   });
 }

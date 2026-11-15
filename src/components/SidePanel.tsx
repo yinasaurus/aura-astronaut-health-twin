@@ -19,6 +19,7 @@ export function SidePanel({
 }) {
   const context = useMission((state) => state.context);
   const commDelayOn = useMission((state) => state.commDelayOn);
+  const showCare = commDelayOn || system.level === "amber" || system.level === "red";
   const logAction = useMission((state) => state.logAction);
   const copy = SYSTEM_COPY[system.system];
   const chip = levelChip(system.level);
@@ -27,7 +28,7 @@ export function SidePanel({
   const start = Math.max(0, day - 14);
 
   return (
-    <aside className="hud-frame flex h-[620px] flex-col overflow-hidden">
+    <aside className="hud-frame flex h-[clamp(22rem,calc(100dvh-16rem),34rem)] flex-col overflow-hidden">
       <div className="border-b border-[#245066] px-4 py-3">
         <p className="font-mono text-xs tracking-[0.18em] text-[#9ad7ea]">{SYSTEM_LABEL[system.system].title}</p>
         <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -81,9 +82,11 @@ export function SidePanel({
             })}
           </ul>
         </div>
-        {commDelayOn ? (
+        {showCare ? (
           <div>
-            <h3 className="font-mono text-xs tracking-[0.16em] text-[#9ad7ea]">SELF-CARE WHILE THE LINK IS DELAYED</h3>
+            <h3 className="font-mono text-xs tracking-[0.16em] text-[#9ad7ea]">
+              {commDelayOn ? "SELF-CARE WHILE THE LINK IS DELAYED" : "SELF-CARE PROMPTS"}
+            </h3>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-[#e8f6ff]">
               {protocolSteps(system.system).map((step) => (
                 <li key={step}>{step}</li>

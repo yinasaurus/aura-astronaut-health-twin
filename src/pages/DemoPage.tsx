@@ -21,7 +21,7 @@ export function DemoPage() {
       window.setTimeout(() => {
         useMission.getState().setDay(64);
         setStep(2);
-      }, 11000),
+      }, 10000),
       window.setTimeout(() => {
         const state = useMission.getState();
         const series = buildSeries({
@@ -32,17 +32,20 @@ export function DemoPage() {
         const flagged = assessDay(series, 64, state.context).systems.find((system) => system.level !== "green");
         if (flagged) state.setSystem(flagged.system);
         setStep(3);
-      }, 17000),
+      }, 15000),
       window.setTimeout(() => {
         useMission.getState().setCommDelay(true);
         setStep(4);
-      }, 22000),
+      }, 20000),
       window.setTimeout(() => {
         const state = useMission.getState();
         state.setCommDelay(false);
         state.setPacketOpen(true);
         setStep(5);
-      }, 27000),
+      }, 24000),
+      window.setTimeout(() => {
+        setStep(6);
+      }, 31000),
     ];
   }, []);
 
