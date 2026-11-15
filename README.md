@@ -60,4 +60,4 @@ REFERENCES.md             libraries, fonts, icons, and NASA pages
 data.txt                  resource list supplied with the project
 ```
 
-No downloaded 3D model is used. The body is built from spheres, capsules, and a torus in the scene.
+No downloaded 3D model is used. The body is a procedural hologram: a fresnel skin shell, organ shapes, and skeleton lines, drawn in the scene.
